@@ -1,0 +1,28 @@
+# Pipeline Team — brand config
+# Team maintaining GitHub Actions CI/CD workflows within ASML.
+# Logo: a CI/CD loop with the "P" (Pipeline) highlighted.
+
+brand:
+  title: 'Pipeline Team'
+
+logo:
+  src: './assets/Pipeline Team Logo.svg'
+  # Hand-mapped fills (what the AI analyze step would automate later):
+  slots:
+    primary: '#0969DA' # the two blue arcs incl. the highlighted P
+    neutral: '#868686' # the gray connector loop
+
+color:
+  primary: '#0969DA' # GitHub-Actions blue — drives ramp derivation
+  # Exact brand anchors per theme (GitHub Primer). These win over derived values;
+  # accent also mirrors into primary + focus ring for one coherent brand blue.
+  light: { bg: '#FFFFFF', fg: '#0D1117', accent: '#0969DA' }
+  dark: { bg: '#0D1117', fg: '#F0F6FC', accent: '#4493F8' }
+
+typography:
+  title: { family: 'Space Grotesk', weight: 700 } # display & headings
+  subtitle: { family: 'IBM Plex Sans', weight: 400 }
+  body: { family: 'IBM Plex Sans', weight: 400 } # running text
+  mono: { family: 'JetBrains Mono', weight: 400 } # code & numerics
+
+# Everything else uses the standard defaults (type scale, clear-space, WCAG AA, etc.).

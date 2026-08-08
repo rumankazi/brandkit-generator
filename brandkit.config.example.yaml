@@ -1,0 +1,56 @@
+# ─────────────────────────────────────────────────────────────────────────
+# brandkit-generator — example config
+#
+# Convention over configuration: only `brand.title`, `logo.src`, and
+# `color.primary` are REQUIRED. Everything below the required block is
+# optional — omit it and the tool applies industry-standard defaults.
+# Uncomment a field only to override a default.
+# ─────────────────────────────────────────────────────────────────────────
+
+brand:
+  title: "Acme"
+  # subtitle: "Build faster"        # optional; drives with/without-subtitle variants
+
+logo:
+  src: ./assets/logo.svg
+  # slots:                          # map source hexes in the SVG → semantic roles
+  #   primary: "#3B82F6"
+  #   contrast: "#FFFFFF"
+
+color:
+  primary: "#3B82F6"                # required
+  # accent: "#8B5CF6"               # optional — feeds palette generation
+  # secondary: "#1E293B"            # optional — feeds palette generation
+
+# ── Everything below is optional (defaults shown) ──────────────────────────
+
+# typography:
+#   source: google                  # fetched & cached locally
+#   base: 16
+#   scale: 1.25                     # modular scale (major third)
+#   title: { family: Inter, weight: 700 }
+#   subtitle: { family: Inter, weight: 400 }
+
+# layout:
+#   clearSpace: 0.5                 # exclusion zone = 0.5 × X (mark height)
+#   gap: 0.3                        # mark → text gap = 0.3 × X
+#   align: optical
+#   minSizePx: 24
+
+# palette:
+#   contrast: AA                    # WCAG target; auto-nudges derived fg
+#   deriveDark: true                # derive dark theme from light
+
+# output:
+#   dir: dist
+#   formats: [svg, png, webp, avif] # add: pdf, ico
+#   densities: [1, 2, 3]
+#   tokens: [dtcg, tailwind]
+
+# surfaces:                         # data-driven presets; add platforms here
+#   - preset: favicon
+#   - preset: avatar
+#   - preset: og-card
+#   - preset: header
+#   - preset: footer
+#   - preset: banner

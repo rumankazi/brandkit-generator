@@ -1,0 +1,38 @@
+{
+  "name": "brandkit-generator",
+  "version": "0.1.0",
+  "description": "Opinionated, config-driven brand-asset generator: one tiny config in, a complete brand kit out.",
+  "type": "module",
+  "bin": {
+    "brandkit": "./build/commands/generate.js"
+  },
+  "scripts": {
+    "generate": "tsx src/commands/generate.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fontsource/space-grotesk": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/culori": "^4.0.1",
+    "culori": "^4.0.2",
+    "fontkit": "^2.0.4",
+    "pdfkit": "^0.19.1",
+    "png-to-ico": "^3.0.2",
+    "sharp": "^0.35.3",
+    "svg-to-pdfkit": "^0.1.8",
+    "yaml": "^2.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/fontkit": "^2.0.9",
+    "@types/node": "^22.5.0",
+    "@types/pdfkit": "^0.17.6",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
