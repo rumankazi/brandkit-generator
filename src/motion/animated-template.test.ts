@@ -44,7 +44,7 @@ test("settle shows a clean whole-logo pulse: the revealed copy hides when .fin t
   assert.match(svg, /@keyframes pt_reveal\{0.00%\{opacity:1\}55.80%\{opacity:1\}56.00%\{opacity:0\}/);
 });
 
-test("duration is parameterizable, default 3.2s", () => {
-  assert.match(renderAnimatedMark({ primary: "#000", neutral: "#fff" }), /animation-duration:3\.2s/);
+test("duration is parameterizable, default 3s", () => {
+  assert.match(renderAnimatedMark({ primary: "#000", neutral: "#fff" }), /animation-duration:3s/);
   assert.match(renderAnimatedMark({ primary: "#000", neutral: "#fff", durationMs: 4000 }), /animation-duration:4s/);
 });

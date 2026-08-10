@@ -132,9 +132,10 @@ const artwork = (primary: string, neutral: string) =>
 const chevron = "M0 -55 L32 0 L0 55 L9 0 Z";
 const solidPen = "M-20 -55 L0 -55 L32 0 L0 55 L-20 55 Z";
 const maskTip = "M-20 -55 L32 0 L-20 55 Z";
-const RETRACT_START = 52; // pen shrinks into the tip over 52→56% instead of overshooting the settled arrow
-const RETRACT_END = 56;
-const WEDGE_END = 28; // the start-wedge only hides the descender tip early; after this the tip reveals as it's drawn
+// Tuned interactively (see the motion tuner) and locked in.
+const RETRACT_START = 53; // pen shrinks into the tip over 53→58% instead of overshooting the settled arrow
+const RETRACT_END = 58;
+const WEDGE_END = 55; // wedge hides the descender tip until the descender arrives (~55%), so no early triangle
 
 /** A single baked frame at cycle fraction `f` ∈ [0,1). */
 export function bakeFrame(f: number, colors: BakeColors): string {
@@ -185,5 +186,5 @@ export function bakeFrames(count: number, colors: BakeColors): string[] {
   return Array.from({ length: count }, (_, i) => bakeFrame(i / count, colors));
 }
 
-/** Reference loop duration (ms) — matches animated-template.ts default. */
-export const REFERENCE_DURATION_MS = 3200;
+/** Loop duration (ms) — tuned; matches animated-template.ts default. */
+export const REFERENCE_DURATION_MS = 3000;
