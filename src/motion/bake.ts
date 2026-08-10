@@ -160,10 +160,11 @@ export function bakeFrame(f: number, colors: BakeColors): string {
   const revealed = revOp > 0 ? `<g mask="url(#bk)" opacity="${revOp}">${art}</g>` : "";
   const settled = finOp > 0 ? `<g opacity="${finOp}" transform="translate(512 512) scale(${settle}) translate(-512 -512)">${art}</g>` : "";
 
-  // Travelling pen — blue over the ink loop, ink over the blue loop; solid near the end.
+  // Travelling pen matches the region being drawn: ink over the bottom-left loop
+  // + middle bar (early), blue over the top-right loop + descender (later).
   let pen = "";
   if (drawing) {
-    const color = p <= PEN_SWITCH ? colors.primary : colors.neutral;
+    const color = p <= PEN_SWITCH ? colors.neutral : colors.primary;
     const shape = p >= PEN_SOLID ? solidPen : chevron;
     pen = place(`<path d="${shape}" fill="${color}"/>`, pop);
   }

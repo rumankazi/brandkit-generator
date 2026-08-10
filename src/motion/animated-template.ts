@@ -89,11 +89,13 @@ export function renderAnimatedMark({ primary, neutral, durationMs = 3200 }: Anim
       .replaceAll(`d="${P_DESCENDER}" fill="#10142B"`, `d="${P_DESCENDER}" fill="${primary}"`)
       .replaceAll(`d="${P_TOPRIGHT}" fill="#10142B"`, `d="${P_TOPRIGHT}" fill="${primary}"`)
       .replaceAll(`d="${P_BOTTOMLEFT}" fill="#1297E4"`, `d="${P_BOTTOMLEFT}" fill="${neutral}"`)
-      // Travelling pen: blue energy early (cA), ink later (cU/cS/sS).
-      .replace(`<g class="cA"><path d="${CHEV}" fill="#1297E4"/>`, `<g class="cA"><path d="${CHEV}" fill="${primary}"/>`)
-      .replace(`<g class="cS" style="opacity:0"><path d="${CHEV}" fill="#10142B"/>`, `<g class="cS" style="opacity:0"><path d="${CHEV}" fill="${neutral}"/>`)
-      .replace(`<g class="sS" style="opacity:0"><path d="${SOLID}" fill="#10142B"/>`, `<g class="sS" style="opacity:0"><path d="${SOLID}" fill="${neutral}"/>`)
-      .replaceAll('fill="#FFFFFF"', `fill="${neutral}"`) // cU chevron
+      // Travelling pen matches the region being drawn: ink while drawing the
+      // bottom-left loop + middle bar (early, cA), blue while drawing the
+      // top-right loop + descender (later, cU/cS/sS).
+      .replace(`<g class="cA"><path d="${CHEV}" fill="#1297E4"/>`, `<g class="cA"><path d="${CHEV}" fill="${neutral}"/>`)
+      .replace(`<g class="cS" style="opacity:0"><path d="${CHEV}" fill="#10142B"/>`, `<g class="cS" style="opacity:0"><path d="${CHEV}" fill="${primary}"/>`)
+      .replace(`<g class="sS" style="opacity:0"><path d="${SOLID}" fill="#10142B"/>`, `<g class="sS" style="opacity:0"><path d="${SOLID}" fill="${primary}"/>`)
+      .replaceAll('fill="#FFFFFF"', `fill="${primary}"`) // cU chevron (over the top-right/blue region)
       .replace("animation-duration:3.2s", `animation-duration:${durationMs / 1000}s`)
   );
 }

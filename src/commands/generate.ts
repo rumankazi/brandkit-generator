@@ -8,7 +8,8 @@ import { loadLogo } from "../logo/load.js";
 import { monoMap, recolorSvg } from "../logo/recolor.js";
 import { centerlineTiming, renderCenterlineMark } from "../motion/centerline.js";
 import { renderAnimatedMark } from "../motion/animated-template.js";
-import { encodeAnimation } from "../motion/encode.js";
+import { encodeAnimation, encodeSvgFrames } from "../motion/encode.js";
+import { bakeLockupFrames, lockupLayout, renderAnimatedLockup, type LockupColors } from "../motion/lockup-anim.js";
 import { padViewBox } from "../svg/util.js";
 import { faviconHeadSnippet, siteWebmanifest } from "../emit/webmanifest.js";
 import { renderPalettePreview, type AppPreview, type LogoBundle, type StickerPreview } from "../preview/palette-preview.js";
@@ -167,6 +168,26 @@ async function main() {
   const [animRasterLight, animRasterDark] = await Promise.all([
     encodeAnimation({ primary: light.accent, neutral: light.fg, background: light.bg }),
     encodeAnimation({ primary: dark.accent, neutral: dark.fg, background: dark.bg }),
+  ]);
+
+  // Animated lockups: mark draws on, then the wordmark reveals. Horizontal +
+  // vertical, both themes, as live SVG + baked GIF/WebP.
+  const lkParams = { wordmark: cfg.brand.title, titleFamily: cfg.typography.title.family, gapRatio: cfg.layout.gap, logoW: logo.width, logoH: logo.height };
+  const hLayout = lockupLayout(lkParams, "horizontal");
+  const vLayout = lockupLayout(lkParams, "vertical");
+  const lkColor = (t: typeof light): LockupColors => ({ primary: t.accent, neutral: t.fg, ink: t.fg });
+  const animLockups = {
+    hLight: renderAnimatedLockup(hLayout, lkColor(light), "horizontal"),
+    hDark: renderAnimatedLockup(hLayout, lkColor(dark), "horizontal"),
+    vLight: renderAnimatedLockup(vLayout, lkColor(light), "vertical"),
+    vDark: renderAnimatedLockup(vLayout, lkColor(dark), "vertical"),
+  };
+  const LK_N = 48;
+  const [lkHL, lkHD, lkVL, lkVD] = await Promise.all([
+    encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(light), "horizontal", light.bg), { width: 1080 }),
+    encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(dark), "horizontal", dark.bg), { width: 1080 }),
+    encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(light), "vertical", light.bg), { width: 440 }),
+    encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(dark), "vertical", dark.bg), { width: 440 }),
   ]);
 
   // Lockups: deterministic, outlined-glyph SVGs with cap-height alignment.
@@ -383,6 +404,20 @@ async function main() {
         "logo/mark-animated-dark.gif",
         "logo/mark-animated-dark.webp",
       ],
+      lockups: [
+        "logo/lockup-horizontal-animated-light.svg",
+        "logo/lockup-horizontal-animated-dark.svg",
+        "logo/lockup-vertical-animated-light.svg",
+        "logo/lockup-vertical-animated-dark.svg",
+        "logo/lockup-horizontal-animated-light.gif",
+        "logo/lockup-horizontal-animated-light.webp",
+        "logo/lockup-horizontal-animated-dark.gif",
+        "logo/lockup-horizontal-animated-dark.webp",
+        "logo/lockup-vertical-animated-light.gif",
+        "logo/lockup-vertical-animated-light.webp",
+        "logo/lockup-vertical-animated-dark.gif",
+        "logo/lockup-vertical-animated-dark.webp",
+      ],
       timing: centerlineMotion,
     },
     print: pdfs.map(([f]) => f),
@@ -408,6 +443,18 @@ async function main() {
     writeFile(resolve(logoDir, "mark-animated-light.webp"), animRasterLight.webp),
     writeFile(resolve(logoDir, "mark-animated-dark.gif"), animRasterDark.gif),
     writeFile(resolve(logoDir, "mark-animated-dark.webp"), animRasterDark.webp),
+    writeFile(resolve(logoDir, "lockup-horizontal-animated-light.svg"), animLockups.hLight),
+    writeFile(resolve(logoDir, "lockup-horizontal-animated-dark.svg"), animLockups.hDark),
+    writeFile(resolve(logoDir, "lockup-vertical-animated-light.svg"), animLockups.vLight),
+    writeFile(resolve(logoDir, "lockup-vertical-animated-dark.svg"), animLockups.vDark),
+    writeFile(resolve(logoDir, "lockup-horizontal-animated-light.gif"), lkHL.gif),
+    writeFile(resolve(logoDir, "lockup-horizontal-animated-light.webp"), lkHL.webp),
+    writeFile(resolve(logoDir, "lockup-horizontal-animated-dark.gif"), lkHD.gif),
+    writeFile(resolve(logoDir, "lockup-horizontal-animated-dark.webp"), lkHD.webp),
+    writeFile(resolve(logoDir, "lockup-vertical-animated-light.gif"), lkVL.gif),
+    writeFile(resolve(logoDir, "lockup-vertical-animated-light.webp"), lkVL.webp),
+    writeFile(resolve(logoDir, "lockup-vertical-animated-dark.gif"), lkVD.gif),
+    writeFile(resolve(logoDir, "lockup-vertical-animated-dark.webp"), lkVD.webp),
     writeFile(resolve(logoDir, "lockup-horizontal-light.svg"), lockups.hLight),
     writeFile(resolve(logoDir, "lockup-horizontal-dark.svg"), lockups.hDark),
     writeFile(resolve(logoDir, "lockup-vertical-light.svg"), lockups.vLight),
@@ -453,7 +500,7 @@ async function main() {
     }
   }
   process.stdout.write(`  logo      : mono(currentColor) + duotone-light/dark + on-accent (${logo.width}×${logo.height})\n`);
-  process.stdout.write(`  motion    : centerline + draw-on master (SVG light/dark) + raster (GIF/WebP light/dark) — draw ${centerlineMotion.drawOrder.map((s) => s.id).join("→")}\n`);
+  process.stdout.write(`  motion    : mark draw-on (SVG + GIF/WebP) + animated lockups h/v (SVG + GIF/WebP), light/dark\n`);
   process.stdout.write(`  lockups   : horizontal + vertical × light/dark + mono(black/white) + clear-space padded\n`);
   process.stdout.write(`  primitives: marks/lockups/wordmark also as PNG (@1x + @2x) + clear-space diagram\n`);
   process.stdout.write(`  apps      : ${SURFACES.map((s) => s.name).join(", ")} (SVG + PNG${SURFACES.some((s) => s.webp) ? "/WebP" : ""} + favicon.ico)\n`);

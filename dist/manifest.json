@@ -49,6 +49,20 @@
       "logo/mark-animated-dark.gif",
       "logo/mark-animated-dark.webp"
     ],
+    "lockups": [
+      "logo/lockup-horizontal-animated-light.svg",
+      "logo/lockup-horizontal-animated-dark.svg",
+      "logo/lockup-vertical-animated-light.svg",
+      "logo/lockup-vertical-animated-dark.svg",
+      "logo/lockup-horizontal-animated-light.gif",
+      "logo/lockup-horizontal-animated-light.webp",
+      "logo/lockup-horizontal-animated-dark.gif",
+      "logo/lockup-horizontal-animated-dark.webp",
+      "logo/lockup-vertical-animated-light.gif",
+      "logo/lockup-vertical-animated-light.webp",
+      "logo/lockup-vertical-animated-dark.gif",
+      "logo/lockup-vertical-animated-dark.webp"
+    ],
     "timing": {
       "pipe": 110,
       "cornerRadius": 145,
