@@ -15,6 +15,9 @@
     "logo/mark-duotone-light.svg",
     "logo/mark-duotone-dark.svg",
     "logo/mark-on-accent.svg",
+    "logo/mark-centerline-light.svg",
+    "logo/mark-centerline-dark.svg",
+    "logo/mark-centerline-mono.svg",
     "logo/logo-original.svg",
     "logo/wordmark-light.svg",
     "logo/wordmark-dark.svg"
@@ -30,6 +33,39 @@
     "logo/lockup-horizontal-dark-clearspace.svg"
   ],
   "diagram": "logo/clearspace-diagram.svg",
+  "motion": {
+    "centerline": [
+      "logo/mark-centerline-light.svg",
+      "logo/mark-centerline-dark.svg",
+      "logo/mark-centerline-mono.svg"
+    ],
+    "animated": [
+      "logo/mark-animated-light.svg",
+      "logo/mark-animated-dark.svg"
+    ],
+    "timing": {
+      "pipe": 110,
+      "cornerRadius": 145,
+      "total": 2645.6,
+      "drawOrder": [
+        {
+          "id": "G",
+          "role": "neutral",
+          "length": 1057.53
+        },
+        {
+          "id": "B",
+          "role": "primary",
+          "length": 1150.3
+        },
+        {
+          "id": "D",
+          "role": "primary",
+          "length": 437.77
+        }
+      ]
+    }
+  },
   "print": [
     "logo/mark-duotone-light.pdf",
     "logo/lockup-horizontal-light.pdf",
@@ -43,6 +79,10 @@
     "logo/mark-duotone-dark@2x.png",
     "logo/mark-on-accent.png",
     "logo/mark-on-accent@2x.png",
+    "logo/mark-centerline-light.png",
+    "logo/mark-centerline-light@2x.png",
+    "logo/mark-centerline-dark.png",
+    "logo/mark-centerline-dark@2x.png",
     "logo/lockup-horizontal-light.png",
     "logo/lockup-horizontal-light@2x.png",
     "logo/lockup-horizontal-dark.png",

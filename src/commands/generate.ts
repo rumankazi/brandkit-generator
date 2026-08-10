@@ -6,6 +6,8 @@ import { renderGuidelines } from "../emit/guidelines.js";
 import { buildClearSpaceDiagram, buildLockups, buildWordmark } from "../lockup/build.js";
 import { loadLogo } from "../logo/load.js";
 import { monoMap, recolorSvg } from "../logo/recolor.js";
+import { centerlineTiming, renderCenterlineMark } from "../motion/centerline.js";
+import { renderAnimatedMark } from "../motion/animated-template.js";
 import { padViewBox } from "../svg/util.js";
 import { faviconHeadSnippet, siteWebmanifest } from "../emit/webmanifest.js";
 import { renderPalettePreview, type AppPreview, type LogoBundle, type StickerPreview } from "../preview/palette-preview.js";
@@ -141,6 +143,25 @@ async function main() {
     duotoneDark: duotone(dark.accent, dark.fg),
     onAccent: recolorSvg(logo.svg, monoMap(slotHexes, "#FFFFFF")),
   };
+  // Motion foundation: the animatable centerline — the pipe's single continuous
+  // spine, stroked at pipe width + flow arrowheads. It reproduces the mark but,
+  // unlike the filled art, it can be "drawn on"; every animated variant builds
+  // on it. Colors follow the duotone (accent = primary, ink = neutral).
+  const centerline = {
+    light: renderCenterlineMark({ primary: light.accent, neutral: light.fg }),
+    dark: renderCenterlineMark({ primary: dark.accent, neutral: dark.fg }),
+    mono: renderCenterlineMark({ primary: "currentColor", neutral: "currentColor" }),
+  };
+  const centerlineMotion = centerlineTiming();
+
+  // Master "draw-on" animation (CSS, browser-native, self-contained). The arrow
+  // draws the mark G→B→D from the bottom and loops back — the brand-launch reveal.
+  // GIF/APNG/Lottie exports (deferred) sample the same timeline analytically.
+  const animated = {
+    light: renderAnimatedMark({ primary: light.accent, neutral: light.fg }),
+    dark: renderAnimatedMark({ primary: dark.accent, neutral: dark.fg }),
+  };
+
   // Lockups: deterministic, outlined-glyph SVGs with cap-height alignment.
   const lockups = buildLockups({
     markLight: variants.duotoneLight,
@@ -209,6 +230,8 @@ async function main() {
     ["mark-duotone-light", variants.duotoneLight, 512],
     ["mark-duotone-dark", variants.duotoneDark, 512],
     ["mark-on-accent", variants.onAccent, 512],
+    ["mark-centerline-light", centerline.light, 512],
+    ["mark-centerline-dark", centerline.dark, 512],
     ["lockup-horizontal-light", lockups.hLight, 1200],
     ["lockup-horizontal-dark", lockups.hDark, 1200],
     ["lockup-vertical-light", lockups.vLight, 700],
@@ -323,6 +346,9 @@ async function main() {
       "logo/mark-duotone-light.svg",
       "logo/mark-duotone-dark.svg",
       "logo/mark-on-accent.svg",
+      "logo/mark-centerline-light.svg",
+      "logo/mark-centerline-dark.svg",
+      "logo/mark-centerline-mono.svg",
       "logo/logo-original.svg",
       "logo/wordmark-light.svg",
       "logo/wordmark-dark.svg",
@@ -338,6 +364,14 @@ async function main() {
       "logo/lockup-horizontal-dark-clearspace.svg",
     ],
     diagram: "logo/clearspace-diagram.svg",
+    // Motion foundation: the animatable centerline + analytic draw timing.
+    // Draw order G→B→D (neutral loop → primary top loop → primary descender),
+    // one continuous gesture from the bottom back to the bottom (seamless loop).
+    motion: {
+      centerline: ["logo/mark-centerline-light.svg", "logo/mark-centerline-dark.svg", "logo/mark-centerline-mono.svg"],
+      animated: ["logo/mark-animated-light.svg", "logo/mark-animated-dark.svg"],
+      timing: centerlineMotion,
+    },
     print: pdfs.map(([f]) => f),
     primitivesRaster: primitivePngs.flatMap(([name]) => [`logo/${name}.png`, `logo/${name}@2x.png`]),
     apps: manifestApps,
@@ -352,6 +386,11 @@ async function main() {
     writeFile(resolve(logoDir, "mark-duotone-light.svg"), variants.duotoneLight),
     writeFile(resolve(logoDir, "mark-duotone-dark.svg"), variants.duotoneDark),
     writeFile(resolve(logoDir, "mark-on-accent.svg"), variants.onAccent),
+    writeFile(resolve(logoDir, "mark-centerline-light.svg"), centerline.light),
+    writeFile(resolve(logoDir, "mark-centerline-dark.svg"), centerline.dark),
+    writeFile(resolve(logoDir, "mark-centerline-mono.svg"), centerline.mono),
+    writeFile(resolve(logoDir, "mark-animated-light.svg"), animated.light),
+    writeFile(resolve(logoDir, "mark-animated-dark.svg"), animated.dark),
     writeFile(resolve(logoDir, "lockup-horizontal-light.svg"), lockups.hLight),
     writeFile(resolve(logoDir, "lockup-horizontal-dark.svg"), lockups.hDark),
     writeFile(resolve(logoDir, "lockup-vertical-light.svg"), lockups.vLight),
@@ -397,6 +436,7 @@ async function main() {
     }
   }
   process.stdout.write(`  logo      : mono(currentColor) + duotone-light/dark + on-accent (${logo.width}×${logo.height})\n`);
+  process.stdout.write(`  motion    : centerline foundation + draw-on master (light/dark) — draw ${centerlineMotion.drawOrder.map((s) => s.id).join("→")}, ${centerlineMotion.total}u @ pipe ${centerlineMotion.pipe}\n`);
   process.stdout.write(`  lockups   : horizontal + vertical × light/dark + mono(black/white) + clear-space padded\n`);
   process.stdout.write(`  primitives: marks/lockups/wordmark also as PNG (@1x + @2x) + clear-space diagram\n`);
   process.stdout.write(`  apps      : ${SURFACES.map((s) => s.name).join(", ")} (SVG + PNG${SURFACES.some((s) => s.webp) ? "/WebP" : ""} + favicon.ico)\n`);
