@@ -311,7 +311,10 @@ async function main() {
   const logoDir = resolve(outDir, "logo");
   const appsDir = resolve(outDir, "apps");
   await mkdir(tokensDir, { recursive: true });
-  await rm(logoDir, { recursive: true, force: true }); // drop stale variants
+  // Full (--motion-raster) builds clear the logo dir for a clean slate; fast
+  // builds keep it so previously-baked GIF/WebP/APNG aren't wiped (they're only
+  // regenerated with --motion-raster). SVG/Lottie are overwritten either way.
+  if (args.motionRaster) await rm(logoDir, { recursive: true, force: true });
   await rm(appsDir, { recursive: true, force: true });
   await mkdir(logoDir, { recursive: true });
   await mkdir(appsDir, { recursive: true });
