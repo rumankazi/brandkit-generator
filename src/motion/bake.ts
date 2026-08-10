@@ -128,9 +128,12 @@ export interface BakeColors {
 const r2 = (n: number) => Math.round(n * 100) / 100;
 const artwork = (primary: string, neutral: string) =>
   ART_BLUE.map((d) => `<path d="${d}" fill="${primary}"/>`).join("") + ART_INK.map((d) => `<path d="${d}" fill="${neutral}"/>`).join("");
-const chevron = "M0 -55 L46 0 L0 55 L14 0 Z";
-const solidPen = "M-20 -55 L0 -55 L46 0 L0 55 L-20 55 Z";
-const maskTip = "M-20 -55 L46 0 L-20 55 Z";
+// Pen shapes match the reference depth (32) so the GIF matches the live SVG.
+const chevron = "M0 -55 L32 0 L0 55 L9 0 Z";
+const solidPen = "M-20 -55 L0 -55 L32 0 L0 55 L-20 55 Z";
+const maskTip = "M-20 -55 L32 0 L-20 55 Z";
+const RETRACT_START = 52; // pen shrinks into the tip over 52→56% instead of overshooting the settled arrow
+const RETRACT_END = 56;
 
 /** A single baked frame at cycle fraction `f` ∈ [0,1). */
 export function bakeFrame(f: number, colors: BakeColors): string {
@@ -147,11 +150,13 @@ export function bakeFrame(f: number, colors: BakeColors): string {
   // Mask: reveal stroke + white tip at the travelling head + black start wedge.
   const dash = r2(interp(DRAW, p));
   const pop = interp(POP, p);
+  const retract = p < RETRACT_START ? 1 : Math.max(0, 1 - (p - RETRACT_START) / (RETRACT_END - RETRACT_START));
+  const penScale = pop * retract; // shrink the leading arrowhead into the tip at the end
   const mask =
     `<mask id="bk" maskUnits="userSpaceOnUse" x="0" y="0" width="${VB}" height="${VB}">` +
     `<rect width="${VB}" height="${VB}" fill="black"/>` +
     `<path d="${TRAVEL_PATH}" fill="none" stroke="#fff" stroke-width="${MASK_STROKE}" stroke-linecap="butt" stroke-linejoin="round" stroke-dasharray="2880.6 2880.6" stroke-dashoffset="${dash}"/>` +
-    `${drawing ? place(`<path d="${maskTip}" fill="#fff"/>`, pop) : ""}` +
+    `${drawing ? place(`<path d="${maskTip}" fill="#fff"/>`, penScale) : ""}` +
     `<path d="M336.5 973L297 914.5L336.5 855Z" fill="black"/></mask>`;
 
   const revOp = r2(interp(REVEAL, p));
@@ -163,10 +168,10 @@ export function bakeFrame(f: number, colors: BakeColors): string {
   // Travelling pen matches the region being drawn: ink over the bottom-left loop
   // + middle bar (early), blue over the top-right loop + descender (later).
   let pen = "";
-  if (drawing) {
+  if (drawing && penScale > 0.01) {
     const color = p <= PEN_SWITCH ? colors.neutral : colors.primary;
     const shape = p >= PEN_SOLID ? solidPen : chevron;
-    pen = place(`<path d="${shape}" fill="${color}"/>`, pop);
+    pen = place(`<path d="${shape}" fill="${color}"/>`, penScale);
   }
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${VB}" height="${VB}" viewBox="0 0 ${VB} ${VB}" fill="none"><defs>${mask}</defs>${bg}<g opacity="${cyc}">${revealed}${settled}${pen}</g></svg>\n`;

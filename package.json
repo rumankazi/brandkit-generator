@@ -8,6 +8,7 @@
   },
   "scripts": {
     "generate": "tsx src/commands/generate.ts",
+    "generate:motion": "tsx src/commands/generate.ts --motion-raster",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --import tsx --test \"src/**/*.test.ts\""

@@ -8,7 +8,7 @@ import { loadLogo } from "../logo/load.js";
 import { monoMap, recolorSvg } from "../logo/recolor.js";
 import { centerlineTiming, renderCenterlineMark } from "../motion/centerline.js";
 import { renderAnimatedMark } from "../motion/animated-template.js";
-import { encodeAnimation, encodeSvgFrames } from "../motion/encode.js";
+import { encodeAnimation, encodeSvgFrames, type EncodeResult } from "../motion/encode.js";
 import { bakeLockupFrames, lockupLayout, renderAnimatedLockup, type LockupColors } from "../motion/lockup-anim.js";
 import { padViewBox } from "../svg/util.js";
 import { faviconHeadSnippet, siteWebmanifest } from "../emit/webmanifest.js";
@@ -27,16 +27,18 @@ interface Args {
   config: string;
   out?: string;
   validateOnly: boolean;
+  motionRaster: boolean;
   help: boolean;
 }
 
 function parseArgs(argv: string[]): Args {
-  const args: Args = { config: "brandkit.config.yaml", validateOnly: false, help: false };
+  const args: Args = { config: "brandkit.config.yaml", validateOnly: false, motionRaster: false, help: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "-c" || a === "--config") args.config = argv[++i] ?? args.config;
     else if (a === "-o" || a === "--out") args.out = argv[++i];
     else if (a === "--validate-only") args.validateOnly = true;
+    else if (a === "--motion-raster") args.motionRaster = true;
     else if (a === "-h" || a === "--help") args.help = true;
     else if (a && !a.startsWith("-")) args.config = a;
   }
@@ -52,6 +54,7 @@ Options:
   -c, --config <file>   Brand config YAML (default: brandkit.config.yaml)
   -o, --out <dir>       Output directory (overrides output.dir)
       --validate-only   Validate + resolve the config and print the plan; no render
+      --motion-raster   Also bake the animations to GIF/WebP (slow; SVGs always emit)
   -h, --help            Show this help
 `;
 
@@ -163,15 +166,8 @@ async function main() {
     light: renderAnimatedMark({ primary: light.accent, neutral: light.fg }),
     dark: renderAnimatedMark({ primary: dark.accent, neutral: dark.fg }),
   };
-  // Raster exports of the animation (GIF + WebP), baked from the same reference
-  // timeline over a solid theme background.
-  const [animRasterLight, animRasterDark] = await Promise.all([
-    encodeAnimation({ primary: light.accent, neutral: light.fg, background: light.bg }),
-    encodeAnimation({ primary: dark.accent, neutral: dark.fg, background: dark.bg }),
-  ]);
-
-  // Animated lockups: mark draws on, then the wordmark reveals. Horizontal +
-  // vertical, both themes, as live SVG + baked GIF/WebP.
+  // Animated lockups (live SVG): mark draws on, then the wordmark reveals.
+  // Horizontal + vertical, both themes. Cheap — always emitted.
   const lkParams = { wordmark: cfg.brand.title, titleFamily: cfg.typography.title.family, gapRatio: cfg.layout.gap, logoW: logo.width, logoH: logo.height };
   const hLayout = lockupLayout(lkParams, "horizontal");
   const vLayout = lockupLayout(lkParams, "vertical");
@@ -182,13 +178,32 @@ async function main() {
     vLight: renderAnimatedLockup(vLayout, lkColor(light), "vertical"),
     vDark: renderAnimatedLockup(vLayout, lkColor(dark), "vertical"),
   };
-  const LK_N = 48;
-  const [lkHL, lkHD, lkVL, lkVD] = await Promise.all([
-    encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(light), "horizontal", light.bg), { width: 1080 }),
-    encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(dark), "horizontal", dark.bg), { width: 1080 }),
-    encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(light), "vertical", light.bg), { width: 440 }),
-    encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(dark), "vertical", dark.bg), { width: 440 }),
-  ]);
+
+  // Raster exports (GIF + WebP) — baked frames; slow, so only with --motion-raster.
+  let animRasterLight: EncodeResult | undefined, animRasterDark: EncodeResult | undefined;
+  let lkHL: EncodeResult | undefined, lkHD: EncodeResult | undefined, lkVL: EncodeResult | undefined, lkVD: EncodeResult | undefined;
+  if (args.motionRaster) {
+    const LK_N = 48;
+    [animRasterLight, animRasterDark] = await Promise.all([
+      encodeAnimation({ primary: light.accent, neutral: light.fg, background: light.bg }),
+      encodeAnimation({ primary: dark.accent, neutral: dark.fg, background: dark.bg }),
+    ]);
+    [lkHL, lkHD, lkVL, lkVD] = await Promise.all([
+      encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(light), "horizontal", light.bg), { width: 1080 }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(dark), "horizontal", dark.bg), { width: 1080 }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(light), "vertical", light.bg), { width: 440 }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(dark), "vertical", dark.bg), { width: 440 }),
+    ]);
+  }
+  const rasterPairs: Array<[string, EncodeResult | undefined]> = [
+    ["mark-animated-light", animRasterLight],
+    ["mark-animated-dark", animRasterDark],
+    ["lockup-horizontal-animated-light", lkHL],
+    ["lockup-horizontal-animated-dark", lkHD],
+    ["lockup-vertical-animated-light", lkVL],
+    ["lockup-vertical-animated-dark", lkVD],
+  ];
+  const motionRasterFiles = rasterPairs.flatMap(([name, res]) => (res ? [`logo/${name}.gif`, `logo/${name}.webp`] : []));
 
   // Lockups: deterministic, outlined-glyph SVGs with cap-height alignment.
   const lockups = buildLockups({
@@ -252,6 +267,11 @@ async function main() {
   await rm(appsDir, { recursive: true, force: true });
   await mkdir(logoDir, { recursive: true });
   await mkdir(appsDir, { recursive: true });
+
+  // GIF/WebP writes (only populated when built with --motion-raster).
+  const motionRasterWrites = rasterPairs.flatMap(([name, res]) =>
+    res ? [writeFile(resolve(logoDir, `${name}.gif`), res.gif), writeFile(resolve(logoDir, `${name}.webp`), res.webp)] : [],
+  );
 
   // PNG exports of the primitives (mark, lockups, wordmark, diagram) — base + @2x.
   const primitivePngs: Array<[string, string, number]> = [
@@ -398,26 +418,13 @@ async function main() {
     motion: {
       centerline: ["logo/mark-centerline-light.svg", "logo/mark-centerline-dark.svg", "logo/mark-centerline-mono.svg"],
       animated: ["logo/mark-animated-light.svg", "logo/mark-animated-dark.svg"],
-      raster: [
-        "logo/mark-animated-light.gif",
-        "logo/mark-animated-light.webp",
-        "logo/mark-animated-dark.gif",
-        "logo/mark-animated-dark.webp",
-      ],
       lockups: [
         "logo/lockup-horizontal-animated-light.svg",
         "logo/lockup-horizontal-animated-dark.svg",
         "logo/lockup-vertical-animated-light.svg",
         "logo/lockup-vertical-animated-dark.svg",
-        "logo/lockup-horizontal-animated-light.gif",
-        "logo/lockup-horizontal-animated-light.webp",
-        "logo/lockup-horizontal-animated-dark.gif",
-        "logo/lockup-horizontal-animated-dark.webp",
-        "logo/lockup-vertical-animated-light.gif",
-        "logo/lockup-vertical-animated-light.webp",
-        "logo/lockup-vertical-animated-dark.gif",
-        "logo/lockup-vertical-animated-dark.webp",
       ],
+      raster: motionRasterFiles, // GIF/WebP — only present when built with --motion-raster
       timing: centerlineMotion,
     },
     print: pdfs.map(([f]) => f),
@@ -439,22 +446,11 @@ async function main() {
     writeFile(resolve(logoDir, "mark-centerline-mono.svg"), centerline.mono),
     writeFile(resolve(logoDir, "mark-animated-light.svg"), animated.light),
     writeFile(resolve(logoDir, "mark-animated-dark.svg"), animated.dark),
-    writeFile(resolve(logoDir, "mark-animated-light.gif"), animRasterLight.gif),
-    writeFile(resolve(logoDir, "mark-animated-light.webp"), animRasterLight.webp),
-    writeFile(resolve(logoDir, "mark-animated-dark.gif"), animRasterDark.gif),
-    writeFile(resolve(logoDir, "mark-animated-dark.webp"), animRasterDark.webp),
     writeFile(resolve(logoDir, "lockup-horizontal-animated-light.svg"), animLockups.hLight),
     writeFile(resolve(logoDir, "lockup-horizontal-animated-dark.svg"), animLockups.hDark),
     writeFile(resolve(logoDir, "lockup-vertical-animated-light.svg"), animLockups.vLight),
     writeFile(resolve(logoDir, "lockup-vertical-animated-dark.svg"), animLockups.vDark),
-    writeFile(resolve(logoDir, "lockup-horizontal-animated-light.gif"), lkHL.gif),
-    writeFile(resolve(logoDir, "lockup-horizontal-animated-light.webp"), lkHL.webp),
-    writeFile(resolve(logoDir, "lockup-horizontal-animated-dark.gif"), lkHD.gif),
-    writeFile(resolve(logoDir, "lockup-horizontal-animated-dark.webp"), lkHD.webp),
-    writeFile(resolve(logoDir, "lockup-vertical-animated-light.gif"), lkVL.gif),
-    writeFile(resolve(logoDir, "lockup-vertical-animated-light.webp"), lkVL.webp),
-    writeFile(resolve(logoDir, "lockup-vertical-animated-dark.gif"), lkVD.gif),
-    writeFile(resolve(logoDir, "lockup-vertical-animated-dark.webp"), lkVD.webp),
+    ...motionRasterWrites,
     writeFile(resolve(logoDir, "lockup-horizontal-light.svg"), lockups.hLight),
     writeFile(resolve(logoDir, "lockup-horizontal-dark.svg"), lockups.hDark),
     writeFile(resolve(logoDir, "lockup-vertical-light.svg"), lockups.vLight),
@@ -500,7 +496,9 @@ async function main() {
     }
   }
   process.stdout.write(`  logo      : mono(currentColor) + duotone-light/dark + on-accent (${logo.width}×${logo.height})\n`);
-  process.stdout.write(`  motion    : mark draw-on (SVG + GIF/WebP) + animated lockups h/v (SVG + GIF/WebP), light/dark\n`);
+  process.stdout.write(
+    `  motion    : mark + lockups h/v draw-on (animated SVG, light/dark)${args.motionRaster ? ` + GIF/WebP raster (${motionRasterFiles.length / 2} clips)` : " — raster skipped (use --motion-raster)"}\n`,
+  );
   process.stdout.write(`  lockups   : horizontal + vertical × light/dark + mono(black/white) + clear-space padded\n`);
   process.stdout.write(`  primitives: marks/lockups/wordmark also as PNG (@1x + @2x) + clear-space diagram\n`);
   process.stdout.write(`  apps      : ${SURFACES.map((s) => s.name).join(", ")} (SVG + PNG${SURFACES.some((s) => s.webp) ? "/WebP" : ""} + favicon.ico)\n`);
