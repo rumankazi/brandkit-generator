@@ -2,12 +2,18 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { renderAnimatedMark } from "./animated-template.js";
 
-test("substitutes theme colours for the reference palette", () => {
+test("recolors every element — no reference colours leak through", () => {
   const svg = renderAnimatedMark({ primary: "#0969DA", neutral: "#0D1117" });
-  assert.ok(svg.includes("#0969DA"), "primary substituted");
-  assert.ok(svg.includes("#0D1117"), "neutral substituted");
+  assert.ok(svg.includes("#0969DA") && svg.includes("#0D1117"), "theme colours present");
   assert.ok(!svg.includes("#1297E4"), "no leftover reference blue");
   assert.ok(!svg.includes("#10142B"), "no leftover reference ink");
+  assert.ok(!svg.includes("#FFFFFF"), "no leftover reference white (cU)");
+});
+
+test("artwork colours match the real logo (blue top-right loop, ink bottom-left loop)", () => {
+  const svg = renderAnimatedMark({ primary: "#0969DA", neutral: "#0D1117" });
+  assert.ok(svg.includes('H769Z" fill="#0969DA"'), "top-right P bowl is blue");
+  assert.ok(svg.includes('H688.383Z" fill="#0D1117"'), "bottom-left loop + middle bar is ink");
 });
 
 test("keeps the proven reference structure: mask inside .pt so the reveal animates", () => {

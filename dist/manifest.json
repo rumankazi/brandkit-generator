@@ -43,6 +43,12 @@
       "logo/mark-animated-light.svg",
       "logo/mark-animated-dark.svg"
     ],
+    "raster": [
+      "logo/mark-animated-light.gif",
+      "logo/mark-animated-light.webp",
+      "logo/mark-animated-dark.gif",
+      "logo/mark-animated-dark.webp"
+    ],
     "timing": {
       "pipe": 110,
       "cornerRadius": 145,

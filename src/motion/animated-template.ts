@@ -64,14 +64,36 @@ const REF = `<svg width="512" height="512" viewBox="0 0 1024 1024" xmlns="http:/
 `;
 
 export interface AnimatedMarkColors {
-  primary: string; // brand accent → the blue in the reference (#1297E4)
-  neutral: string; // theme foreground → the ink loop in the reference (#10142B)
+  primary: string; // brand accent (blue) — the top-right loop (P bowl) + descender
+  neutral: string; // theme foreground (ink) — the bottom-left loop + middle bar
   durationMs?: number; // one full loop; reference default is 3200ms
 }
 
-/** The reference animated mark with theme colours (and optional duration) substituted. */
+// Reference artwork paths, by region. The reference assigned its two colours to
+// the OPPOSITE loops from the real logo, so we recolour per element (not a blind
+// value swap): artwork matches the logo, while the pen stays blue-then-ink.
+const P_DESCENDER =
+  "M567 769C567 879.457 477.457 969 367 969H334.016L302.548 914.497L334.589 859H367C416.706 859 457 818.706 457 769V587H567V769Z";
+const P_TOPRIGHT =
+  "M769 55C879.457 55 969 144.543 969 255V367C969 477.457 879.457 567 769 567H712.111L743.549 512.551L711.477 457H769C818.706 457 859 416.706 859 367V255C859 205.294 818.706 165 769 165H657C607.294 165 567 205.294 567 255V437H457V255C457 144.543 546.543 55 657 55H769Z";
+const P_BOTTOMLEFT =
+  "M688.383 457L720.454 512.551L689.018 567H255C205.294 567 165 607.294 165 657V769C165 818.706 205.294 859 255 859H311.494L279.453 914.498L310.921 969H255C144.543 969 55 879.457 55 769V657C55 546.543 144.543 457 255 457H688.383Z";
+const CHEV = "M0 -55 L32 0 L0 55 L9 0 Z";
+const SOLID = "M-20 -55 L0 -55 L32 0 L0 55 L-20 55 Z";
+
+/** The reference animated mark, recolored per element to match the real logo. */
 export function renderAnimatedMark({ primary, neutral, durationMs = 3200 }: AnimatedMarkColors): string {
-  return REF.replaceAll("#1297E4", primary)
-    .replaceAll("#10142B", neutral)
-    .replace("animation-duration:3.2s", `animation-duration:${durationMs / 1000}s`);
+  return (
+    REF
+      // Artwork → real-logo colours: blue on the top-right loop + descender, ink on the bottom-left loop + middle bar.
+      .replaceAll(`d="${P_DESCENDER}" fill="#10142B"`, `d="${P_DESCENDER}" fill="${primary}"`)
+      .replaceAll(`d="${P_TOPRIGHT}" fill="#10142B"`, `d="${P_TOPRIGHT}" fill="${primary}"`)
+      .replaceAll(`d="${P_BOTTOMLEFT}" fill="#1297E4"`, `d="${P_BOTTOMLEFT}" fill="${neutral}"`)
+      // Travelling pen: blue energy early (cA), ink later (cU/cS/sS).
+      .replace(`<g class="cA"><path d="${CHEV}" fill="#1297E4"/>`, `<g class="cA"><path d="${CHEV}" fill="${primary}"/>`)
+      .replace(`<g class="cS" style="opacity:0"><path d="${CHEV}" fill="#10142B"/>`, `<g class="cS" style="opacity:0"><path d="${CHEV}" fill="${neutral}"/>`)
+      .replace(`<g class="sS" style="opacity:0"><path d="${SOLID}" fill="#10142B"/>`, `<g class="sS" style="opacity:0"><path d="${SOLID}" fill="${neutral}"/>`)
+      .replaceAll('fill="#FFFFFF"', `fill="${neutral}"`) // cU chevron
+      .replace("animation-duration:3.2s", `animation-duration:${durationMs / 1000}s`)
+  );
 }

@@ -8,6 +8,7 @@ import { loadLogo } from "../logo/load.js";
 import { monoMap, recolorSvg } from "../logo/recolor.js";
 import { centerlineTiming, renderCenterlineMark } from "../motion/centerline.js";
 import { renderAnimatedMark } from "../motion/animated-template.js";
+import { encodeAnimation } from "../motion/encode.js";
 import { padViewBox } from "../svg/util.js";
 import { faviconHeadSnippet, siteWebmanifest } from "../emit/webmanifest.js";
 import { renderPalettePreview, type AppPreview, type LogoBundle, type StickerPreview } from "../preview/palette-preview.js";
@@ -161,6 +162,12 @@ async function main() {
     light: renderAnimatedMark({ primary: light.accent, neutral: light.fg }),
     dark: renderAnimatedMark({ primary: dark.accent, neutral: dark.fg }),
   };
+  // Raster exports of the animation (GIF + WebP), baked from the same reference
+  // timeline over a solid theme background.
+  const [animRasterLight, animRasterDark] = await Promise.all([
+    encodeAnimation({ primary: light.accent, neutral: light.fg, background: light.bg }),
+    encodeAnimation({ primary: dark.accent, neutral: dark.fg, background: dark.bg }),
+  ]);
 
   // Lockups: deterministic, outlined-glyph SVGs with cap-height alignment.
   const lockups = buildLockups({
@@ -370,6 +377,12 @@ async function main() {
     motion: {
       centerline: ["logo/mark-centerline-light.svg", "logo/mark-centerline-dark.svg", "logo/mark-centerline-mono.svg"],
       animated: ["logo/mark-animated-light.svg", "logo/mark-animated-dark.svg"],
+      raster: [
+        "logo/mark-animated-light.gif",
+        "logo/mark-animated-light.webp",
+        "logo/mark-animated-dark.gif",
+        "logo/mark-animated-dark.webp",
+      ],
       timing: centerlineMotion,
     },
     print: pdfs.map(([f]) => f),
@@ -391,6 +404,10 @@ async function main() {
     writeFile(resolve(logoDir, "mark-centerline-mono.svg"), centerline.mono),
     writeFile(resolve(logoDir, "mark-animated-light.svg"), animated.light),
     writeFile(resolve(logoDir, "mark-animated-dark.svg"), animated.dark),
+    writeFile(resolve(logoDir, "mark-animated-light.gif"), animRasterLight.gif),
+    writeFile(resolve(logoDir, "mark-animated-light.webp"), animRasterLight.webp),
+    writeFile(resolve(logoDir, "mark-animated-dark.gif"), animRasterDark.gif),
+    writeFile(resolve(logoDir, "mark-animated-dark.webp"), animRasterDark.webp),
     writeFile(resolve(logoDir, "lockup-horizontal-light.svg"), lockups.hLight),
     writeFile(resolve(logoDir, "lockup-horizontal-dark.svg"), lockups.hDark),
     writeFile(resolve(logoDir, "lockup-vertical-light.svg"), lockups.vLight),
@@ -436,7 +453,7 @@ async function main() {
     }
   }
   process.stdout.write(`  logo      : mono(currentColor) + duotone-light/dark + on-accent (${logo.width}×${logo.height})\n`);
-  process.stdout.write(`  motion    : centerline foundation + draw-on master (light/dark) — draw ${centerlineMotion.drawOrder.map((s) => s.id).join("→")}, ${centerlineMotion.total}u @ pipe ${centerlineMotion.pipe}\n`);
+  process.stdout.write(`  motion    : centerline + draw-on master (SVG light/dark) + raster (GIF/WebP light/dark) — draw ${centerlineMotion.drawOrder.map((s) => s.id).join("→")}\n`);
   process.stdout.write(`  lockups   : horizontal + vertical × light/dark + mono(black/white) + clear-space padded\n`);
   process.stdout.write(`  primitives: marks/lockups/wordmark also as PNG (@1x + @2x) + clear-space diagram\n`);
   process.stdout.write(`  apps      : ${SURFACES.map((s) => s.name).join(", ")} (SVG + PNG${SURFACES.some((s) => s.webp) ? "/WebP" : ""} + favicon.ico)\n`);
