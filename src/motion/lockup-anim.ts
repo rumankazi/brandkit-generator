@@ -108,8 +108,8 @@ export function renderAnimatedLockup(l: Layout, colors: LockupColors, o: Orienta
 const interpStep = (p: number, a: number, b: number) => (p <= a ? 0 : p >= b ? 1 : (p - a) / (b - a));
 const cycleFade = (p: number) => (p <= 88.5 ? 1 : p >= 96.5 ? 0 : 1 - (p - 88.5) / 8);
 
-/** One baked lockup frame at cycle fraction f (static SVG, for GIF/WebP export). */
-export function bakeLockupFrame(f: number, l: Layout, colors: LockupColors, o: Orientation, background: string): string {
+/** One baked lockup frame at cycle fraction f (static SVG, for GIF/WebP/APNG export). */
+export function bakeLockupFrame(f: number, l: Layout, colors: LockupColors, o: Orientation, background?: string): string {
   const p = (((f % 1) + 1) % 1) * 100;
   const markColors: BakeColors = { primary: colors.primary, neutral: colors.neutral };
   const mark = nestMark(bakeFrame(f, markColors), l.markX, l.markY, l.markSize);
@@ -119,9 +119,10 @@ export function bakeLockupFrame(f: number, l: Layout, colors: LockupColors, o: O
   const dx = o === "horizontal" ? slide : 0;
   const dy = o === "horizontal" ? 0 : slide;
   const word = wmOp > 0 ? `<g transform="translate(${r(l.wordX + dx)} ${r(l.baselineY + dy)})" opacity="${wmOp}"><path d="${l.wmD}" fill="${colors.ink}"/></g>` : "";
-  return `${svgOpen(l)}<rect x="${r(l.vbX)}" y="${r(l.vbY)}" width="${r(l.w)}" height="${r(l.h)}" fill="${background}"/>${mark}${word}</svg>\n`;
+  const bg = background ? `<rect x="${r(l.vbX)}" y="${r(l.vbY)}" width="${r(l.w)}" height="${r(l.h)}" fill="${background}"/>` : "";
+  return `${svgOpen(l)}${bg}${mark}${word}</svg>\n`;
 }
 
-export function bakeLockupFrames(count: number, l: Layout, colors: LockupColors, o: Orientation, background: string): string[] {
+export function bakeLockupFrames(count: number, l: Layout, colors: LockupColors, o: Orientation, background?: string): string[] {
   return Array.from({ length: count }, (_, i) => bakeLockupFrame(i / count, l, colors, o, background));
 }

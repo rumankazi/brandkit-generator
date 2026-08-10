@@ -199,27 +199,28 @@ async function main() {
   let puL: EncodeResult | undefined, puD: EncodeResult | undefined, asL: EncodeResult | undefined, asD: EncodeResult | undefined;
   if (args.motionRaster) {
     const LK_N = 48;
+    // Frames are baked transparent; GIF is matted per theme, WebP/APNG keep alpha.
     [animRasterLight, animRasterDark] = await Promise.all([
-      encodeAnimation({ primary: light.accent, neutral: light.fg, background: light.bg }),
-      encodeAnimation({ primary: dark.accent, neutral: dark.fg, background: dark.bg }),
+      encodeAnimation({ primary: light.accent, neutral: light.fg }, { matte: light.bg }),
+      encodeAnimation({ primary: dark.accent, neutral: dark.fg }, { matte: dark.bg }),
     ]);
     [lkHL, lkHD, lkVL, lkVD] = await Promise.all([
-      encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(light), "horizontal", light.bg), { width: 1080 }),
-      encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(dark), "horizontal", dark.bg), { width: 1080 }),
-      encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(light), "vertical", light.bg), { width: 440 }),
-      encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(dark), "vertical", dark.bg), { width: 440 }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(light), "horizontal"), { width: 1080, matte: light.bg }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(dark), "horizontal"), { width: 1080, matte: dark.bg }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(light), "vertical"), { width: 440, matte: light.bg }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(dark), "vertical"), { width: 440, matte: dark.bg }),
     ]);
     [fdL, fdD] = await Promise.all([
-      encodeSvgFrames(bakeFlowDashFrames(48, { ...flowDashParams(light), background: light.bg }), { width: 480, durationMs: 2400 }),
-      encodeSvgFrames(bakeFlowDashFrames(48, { ...flowDashParams(dark), background: dark.bg }), { width: 480, durationMs: 2400 }),
+      encodeSvgFrames(bakeFlowDashFrames(48, flowDashParams(light)), { width: 480, durationMs: 2400, matte: light.bg }),
+      encodeSvgFrames(bakeFlowDashFrames(48, flowDashParams(dark)), { width: 480, durationMs: 2400, matte: dark.bg }),
     ]);
     [puL, puD] = await Promise.all([
-      encodeSvgFrames(bakePulseFrames(40, { ...pulseC(light), background: light.bg }), { width: 480, durationMs: 1500 }),
-      encodeSvgFrames(bakePulseFrames(40, { ...pulseC(dark), background: dark.bg }), { width: 480, durationMs: 1500 }),
+      encodeSvgFrames(bakePulseFrames(40, pulseC(light)), { width: 480, durationMs: 1500, matte: light.bg }),
+      encodeSvgFrames(bakePulseFrames(40, pulseC(dark)), { width: 480, durationMs: 1500, matte: dark.bg }),
     ]);
     [asL, asD] = await Promise.all([
-      encodeSvgFrames(bakeAssembleFrames(48, { ...pulseC(light), background: light.bg }), { width: 480, durationMs: 4000 }),
-      encodeSvgFrames(bakeAssembleFrames(48, { ...pulseC(dark), background: dark.bg }), { width: 480, durationMs: 4000 }),
+      encodeSvgFrames(bakeAssembleFrames(48, pulseC(light)), { width: 480, durationMs: 4000, matte: light.bg }),
+      encodeSvgFrames(bakeAssembleFrames(48, pulseC(dark)), { width: 480, durationMs: 4000, matte: dark.bg }),
     ]);
   }
   const rasterPairs: Array<[string, EncodeResult | undefined]> = [
@@ -236,7 +237,7 @@ async function main() {
     ["mark-assemble-light", asL],
     ["mark-assemble-dark", asD],
   ];
-  const motionRasterFiles = rasterPairs.flatMap(([name, res]) => (res ? [`logo/${name}.gif`, `logo/${name}.webp`] : []));
+  const motionRasterFiles = rasterPairs.flatMap(([name, res]) => (res ? [`logo/${name}.gif`, `logo/${name}.webp`, `logo/${name}.apng`] : []));
 
   // Lockups: deterministic, outlined-glyph SVGs with cap-height alignment.
   const lockups = buildLockups({
@@ -303,7 +304,13 @@ async function main() {
 
   // GIF/WebP writes (only populated when built with --motion-raster).
   const motionRasterWrites = rasterPairs.flatMap(([name, res]) =>
-    res ? [writeFile(resolve(logoDir, `${name}.gif`), res.gif), writeFile(resolve(logoDir, `${name}.webp`), res.webp)] : [],
+    res
+      ? [
+          writeFile(resolve(logoDir, `${name}.gif`), res.gif),
+          writeFile(resolve(logoDir, `${name}.webp`), res.webp),
+          writeFile(resolve(logoDir, `${name}.apng`), res.apng),
+        ]
+      : [],
   );
 
   // PNG exports of the primitives (mark, lockups, wordmark, diagram) — base + @2x.
