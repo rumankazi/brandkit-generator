@@ -13,6 +13,7 @@ import { bakeLockupFrames, lockupLayout, renderAnimatedLockup, type LockupColors
 import { bakeFlowDashFrames, renderFlowDash } from "../motion/flowdash.js";
 import { bakePulseFrames, renderPulse } from "../motion/pulse.js";
 import { bakeAssembleFrames, renderAssemble } from "../motion/assemble.js";
+import { buildAssembleLottie, buildDrawOnLottie, buildFlowDashLottie, buildPulseLottie } from "../motion/lottie.js";
 import { padViewBox } from "../svg/util.js";
 import { faviconHeadSnippet, siteWebmanifest } from "../emit/webmanifest.js";
 import { renderPalettePreview, type AppPreview, type LogoBundle, type StickerPreview } from "../preview/palette-preview.js";
@@ -191,6 +192,19 @@ async function main() {
   const pulseC = (t: typeof light) => ({ primary: t.accent, neutral: t.fg });
   const pulse = { light: renderPulse(pulseC(light)), dark: renderPulse(pulseC(dark)) };
   const assemble = { light: renderAssemble(pulseC(light)), dark: renderAssemble(pulseC(dark)) };
+  // Lottie (vector JSON) for the draw-on + all three variants. Cheap (no baking),
+  // so always emitted. Filenames mirror the SVG/GIF/WebP/APNG names.
+  const lc = pulseC; // { primary: accent, neutral: fg }
+  const lottie: Array<[string, string]> = [
+    ["mark-animated-light", buildDrawOnLottie(lc(light))],
+    ["mark-animated-dark", buildDrawOnLottie(lc(dark))],
+    ["mark-flowdash-light", buildFlowDashLottie(lc(light))],
+    ["mark-flowdash-dark", buildFlowDashLottie(lc(dark))],
+    ["mark-pulse-light", buildPulseLottie(lc(light))],
+    ["mark-pulse-dark", buildPulseLottie(lc(dark))],
+    ["mark-assemble-light", buildAssembleLottie(lc(light))],
+    ["mark-assemble-dark", buildAssembleLottie(lc(dark))],
+  ];
 
   // Raster exports (GIF + WebP) — baked frames; slow, so only with --motion-raster.
   let animRasterLight: EncodeResult | undefined, animRasterDark: EncodeResult | undefined;
@@ -472,7 +486,8 @@ async function main() {
         "logo/mark-assemble-light.svg",
         "logo/mark-assemble-dark.svg",
       ],
-      raster: motionRasterFiles, // GIF/WebP — only present when built with --motion-raster
+      lottie: lottie.map(([name]) => `logo/${name}.json`),
+      raster: motionRasterFiles, // GIF/WebP/APNG — only present when built with --motion-raster
       timing: centerlineMotion,
     },
     print: pdfs.map(([f]) => f),
@@ -504,6 +519,7 @@ async function main() {
     writeFile(resolve(logoDir, "mark-pulse-dark.svg"), pulse.dark),
     writeFile(resolve(logoDir, "mark-assemble-light.svg"), assemble.light),
     writeFile(resolve(logoDir, "mark-assemble-dark.svg"), assemble.dark),
+    ...lottie.map(([name, json]) => writeFile(resolve(logoDir, `${name}.json`), json)),
     ...motionRasterWrites,
     writeFile(resolve(logoDir, "lockup-horizontal-light.svg"), lockups.hLight),
     writeFile(resolve(logoDir, "lockup-horizontal-dark.svg"), lockups.hDark),
@@ -551,7 +567,7 @@ async function main() {
   }
   process.stdout.write(`  logo      : mono(currentColor) + duotone-light/dark + on-accent (${logo.width}×${logo.height})\n`);
   process.stdout.write(
-    `  motion    : mark + lockups h/v draw-on (animated SVG, light/dark)${args.motionRaster ? ` + GIF/WebP raster (${motionRasterFiles.length / 2} clips)` : " — raster skipped (use --motion-raster)"}\n`,
+    `  motion    : draw-on + flow-dash/pulse/assemble + lockups h/v — animated SVG + Lottie (light/dark)${args.motionRaster ? ` + GIF/WebP/APNG raster (${motionRasterFiles.length / 3} clips)` : " — raster skipped (use --motion-raster)"}\n`,
   );
   process.stdout.write(`  lockups   : horizontal + vertical × light/dark + mono(black/white) + clear-space padded\n`);
   process.stdout.write(`  primitives: marks/lockups/wordmark also as PNG (@1x + @2x) + clear-space diagram\n`);
