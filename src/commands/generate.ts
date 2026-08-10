@@ -6,6 +6,14 @@ import { renderGuidelines } from "../emit/guidelines.js";
 import { buildClearSpaceDiagram, buildLockups, buildWordmark } from "../lockup/build.js";
 import { loadLogo } from "../logo/load.js";
 import { monoMap, recolorSvg } from "../logo/recolor.js";
+import { centerlineTiming, renderCenterlineMark } from "../motion/centerline.js";
+import { renderAnimatedMark } from "../motion/animated-template.js";
+import { encodeAnimation, encodeSvgFrames, type EncodeResult } from "../motion/encode.js";
+import { bakeLockupFrames, lockupLayout, renderAnimatedLockup, type LockupColors } from "../motion/lockup-anim.js";
+import { bakeFlowDashFrames, renderFlowDash } from "../motion/flowdash.js";
+import { bakePulseFrames, renderPulse } from "../motion/pulse.js";
+import { bakeAssembleFrames, renderAssemble } from "../motion/assemble.js";
+import { buildAssembleLottie, buildDrawOnLottie, buildFlowDashLottie, buildPulseLottie } from "../motion/lottie.js";
 import { padViewBox } from "../svg/util.js";
 import { faviconHeadSnippet, siteWebmanifest } from "../emit/webmanifest.js";
 import { renderPalettePreview, type AppPreview, type LogoBundle, type StickerPreview } from "../preview/palette-preview.js";
@@ -23,16 +31,18 @@ interface Args {
   config: string;
   out?: string;
   validateOnly: boolean;
+  motionRaster: boolean;
   help: boolean;
 }
 
 function parseArgs(argv: string[]): Args {
-  const args: Args = { config: "brandkit.config.yaml", validateOnly: false, help: false };
+  const args: Args = { config: "brandkit.config.yaml", validateOnly: false, motionRaster: false, help: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "-c" || a === "--config") args.config = argv[++i] ?? args.config;
     else if (a === "-o" || a === "--out") args.out = argv[++i];
     else if (a === "--validate-only") args.validateOnly = true;
+    else if (a === "--motion-raster") args.motionRaster = true;
     else if (a === "-h" || a === "--help") args.help = true;
     else if (a && !a.startsWith("-")) args.config = a;
   }
@@ -48,6 +58,7 @@ Options:
   -c, --config <file>   Brand config YAML (default: brandkit.config.yaml)
   -o, --out <dir>       Output directory (overrides output.dir)
       --validate-only   Validate + resolve the config and print the plan; no render
+      --motion-raster   Also bake the animations to GIF/WebP (slow; SVGs always emit)
   -h, --help            Show this help
 `;
 
@@ -141,6 +152,107 @@ async function main() {
     duotoneDark: duotone(dark.accent, dark.fg),
     onAccent: recolorSvg(logo.svg, monoMap(slotHexes, "#FFFFFF")),
   };
+  // Motion foundation: the animatable centerline — the pipe's single continuous
+  // spine, stroked at pipe width + flow arrowheads. It reproduces the mark but,
+  // unlike the filled art, it can be "drawn on"; every animated variant builds
+  // on it. Colors follow the duotone (accent = primary, ink = neutral).
+  const centerline = {
+    light: renderCenterlineMark({ primary: light.accent, neutral: light.fg }),
+    dark: renderCenterlineMark({ primary: dark.accent, neutral: dark.fg }),
+    mono: renderCenterlineMark({ primary: "currentColor", neutral: "currentColor" }),
+  };
+  const centerlineMotion = centerlineTiming();
+
+  // Master "draw-on" animation (CSS, browser-native, self-contained). The arrow
+  // draws the mark G→B→D from the bottom and loops back — the brand-launch reveal.
+  // GIF/APNG/Lottie exports (deferred) sample the same timeline analytically.
+  const animated = {
+    light: renderAnimatedMark({ primary: light.accent, neutral: light.fg }),
+    dark: renderAnimatedMark({ primary: dark.accent, neutral: dark.fg }),
+  };
+  // Animated lockups (live SVG): mark draws on, then the wordmark reveals.
+  // Horizontal + vertical, both themes. Cheap — always emitted.
+  const lkParams = { wordmark: cfg.brand.title, titleFamily: cfg.typography.title.family, gapRatio: cfg.layout.gap, logoW: logo.width, logoH: logo.height };
+  const hLayout = lockupLayout(lkParams, "horizontal");
+  const vLayout = lockupLayout(lkParams, "vertical");
+  const lkColor = (t: typeof light): LockupColors => ({ primary: t.accent, neutral: t.fg, ink: t.fg });
+  const animLockups = {
+    hLight: renderAnimatedLockup(hLayout, lkColor(light), "horizontal"),
+    hDark: renderAnimatedLockup(hLayout, lkColor(dark), "horizontal"),
+    vLight: renderAnimatedLockup(vLayout, lkColor(light), "vertical"),
+    vDark: renderAnimatedLockup(vLayout, lkColor(dark), "vertical"),
+  };
+
+  // Variant — flow-dash "always running": the finished mark with a pulse
+  // circulating the pipe (tuned values). Live SVG always; GIF/WebP gated.
+  const flowDashParams = (t: typeof light) => ({ primary: t.accent, neutral: t.fg, count: 1, lenPct: 8, durationMs: 2400, opacity: 0.6, pulseColor: "#ffffff" });
+  const flowDash = { light: renderFlowDash(flowDashParams(light)), dark: renderFlowDash(flowDashParams(dark)) };
+  // Variants — pulse (breathe) and assemble (pop-in). Tuned values are the module
+  // defaults, so colours are all that's needed. Live SVG always; GIF/WebP gated.
+  const pulseC = (t: typeof light) => ({ primary: t.accent, neutral: t.fg });
+  const pulse = { light: renderPulse(pulseC(light)), dark: renderPulse(pulseC(dark)) };
+  const assemble = { light: renderAssemble(pulseC(light)), dark: renderAssemble(pulseC(dark)) };
+  // Lottie (vector JSON) for the draw-on + all three variants. Cheap (no baking),
+  // so always emitted. Filenames mirror the SVG/GIF/WebP/APNG names.
+  const lc = pulseC; // { primary: accent, neutral: fg }
+  const lottie: Array<[string, string]> = [
+    ["mark-animated-light", buildDrawOnLottie(lc(light))],
+    ["mark-animated-dark", buildDrawOnLottie(lc(dark))],
+    ["mark-flowdash-light", buildFlowDashLottie(lc(light))],
+    ["mark-flowdash-dark", buildFlowDashLottie(lc(dark))],
+    ["mark-pulse-light", buildPulseLottie(lc(light))],
+    ["mark-pulse-dark", buildPulseLottie(lc(dark))],
+    ["mark-assemble-light", buildAssembleLottie(lc(light))],
+    ["mark-assemble-dark", buildAssembleLottie(lc(dark))],
+  ];
+
+  // Raster exports (GIF + WebP) — baked frames; slow, so only with --motion-raster.
+  let animRasterLight: EncodeResult | undefined, animRasterDark: EncodeResult | undefined;
+  let lkHL: EncodeResult | undefined, lkHD: EncodeResult | undefined, lkVL: EncodeResult | undefined, lkVD: EncodeResult | undefined;
+  let fdL: EncodeResult | undefined, fdD: EncodeResult | undefined;
+  let puL: EncodeResult | undefined, puD: EncodeResult | undefined, asL: EncodeResult | undefined, asD: EncodeResult | undefined;
+  if (args.motionRaster) {
+    const LK_N = 48;
+    // Frames are baked transparent; GIF is matted per theme, WebP/APNG keep alpha.
+    [animRasterLight, animRasterDark] = await Promise.all([
+      encodeAnimation({ primary: light.accent, neutral: light.fg }, { matte: light.bg }),
+      encodeAnimation({ primary: dark.accent, neutral: dark.fg }, { matte: dark.bg }),
+    ]);
+    [lkHL, lkHD, lkVL, lkVD] = await Promise.all([
+      encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(light), "horizontal"), { width: 1080, matte: light.bg }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, hLayout, lkColor(dark), "horizontal"), { width: 1080, matte: dark.bg }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(light), "vertical"), { width: 440, matte: light.bg }),
+      encodeSvgFrames(bakeLockupFrames(LK_N, vLayout, lkColor(dark), "vertical"), { width: 440, matte: dark.bg }),
+    ]);
+    [fdL, fdD] = await Promise.all([
+      encodeSvgFrames(bakeFlowDashFrames(48, flowDashParams(light)), { width: 480, durationMs: 2400, matte: light.bg }),
+      encodeSvgFrames(bakeFlowDashFrames(48, flowDashParams(dark)), { width: 480, durationMs: 2400, matte: dark.bg }),
+    ]);
+    [puL, puD] = await Promise.all([
+      encodeSvgFrames(bakePulseFrames(40, pulseC(light)), { width: 480, durationMs: 1500, matte: light.bg }),
+      encodeSvgFrames(bakePulseFrames(40, pulseC(dark)), { width: 480, durationMs: 1500, matte: dark.bg }),
+    ]);
+    [asL, asD] = await Promise.all([
+      encodeSvgFrames(bakeAssembleFrames(48, pulseC(light)), { width: 480, durationMs: 4000, matte: light.bg }),
+      encodeSvgFrames(bakeAssembleFrames(48, pulseC(dark)), { width: 480, durationMs: 4000, matte: dark.bg }),
+    ]);
+  }
+  const rasterPairs: Array<[string, EncodeResult | undefined]> = [
+    ["mark-animated-light", animRasterLight],
+    ["mark-animated-dark", animRasterDark],
+    ["lockup-horizontal-animated-light", lkHL],
+    ["lockup-horizontal-animated-dark", lkHD],
+    ["lockup-vertical-animated-light", lkVL],
+    ["lockup-vertical-animated-dark", lkVD],
+    ["mark-flowdash-light", fdL],
+    ["mark-flowdash-dark", fdD],
+    ["mark-pulse-light", puL],
+    ["mark-pulse-dark", puD],
+    ["mark-assemble-light", asL],
+    ["mark-assemble-dark", asD],
+  ];
+  const motionRasterFiles = rasterPairs.flatMap(([name, res]) => (res ? [`logo/${name}.gif`, `logo/${name}.webp`, `logo/${name}.apng`] : []));
+
   // Lockups: deterministic, outlined-glyph SVGs with cap-height alignment.
   const lockups = buildLockups({
     markLight: variants.duotoneLight,
@@ -199,16 +311,32 @@ async function main() {
   const logoDir = resolve(outDir, "logo");
   const appsDir = resolve(outDir, "apps");
   await mkdir(tokensDir, { recursive: true });
-  await rm(logoDir, { recursive: true, force: true }); // drop stale variants
+  // Full (--motion-raster) builds clear the logo dir for a clean slate; fast
+  // builds keep it so previously-baked GIF/WebP/APNG aren't wiped (they're only
+  // regenerated with --motion-raster). SVG/Lottie are overwritten either way.
+  if (args.motionRaster) await rm(logoDir, { recursive: true, force: true });
   await rm(appsDir, { recursive: true, force: true });
   await mkdir(logoDir, { recursive: true });
   await mkdir(appsDir, { recursive: true });
+
+  // GIF/WebP writes (only populated when built with --motion-raster).
+  const motionRasterWrites = rasterPairs.flatMap(([name, res]) =>
+    res
+      ? [
+          writeFile(resolve(logoDir, `${name}.gif`), res.gif),
+          writeFile(resolve(logoDir, `${name}.webp`), res.webp),
+          writeFile(resolve(logoDir, `${name}.apng`), res.apng),
+        ]
+      : [],
+  );
 
   // PNG exports of the primitives (mark, lockups, wordmark, diagram) — base + @2x.
   const primitivePngs: Array<[string, string, number]> = [
     ["mark-duotone-light", variants.duotoneLight, 512],
     ["mark-duotone-dark", variants.duotoneDark, 512],
     ["mark-on-accent", variants.onAccent, 512],
+    ["mark-centerline-light", centerline.light, 512],
+    ["mark-centerline-dark", centerline.dark, 512],
     ["lockup-horizontal-light", lockups.hLight, 1200],
     ["lockup-horizontal-dark", lockups.hDark, 1200],
     ["lockup-vertical-light", lockups.vLight, 700],
@@ -323,6 +451,9 @@ async function main() {
       "logo/mark-duotone-light.svg",
       "logo/mark-duotone-dark.svg",
       "logo/mark-on-accent.svg",
+      "logo/mark-centerline-light.svg",
+      "logo/mark-centerline-dark.svg",
+      "logo/mark-centerline-mono.svg",
       "logo/logo-original.svg",
       "logo/wordmark-light.svg",
       "logo/wordmark-dark.svg",
@@ -338,6 +469,30 @@ async function main() {
       "logo/lockup-horizontal-dark-clearspace.svg",
     ],
     diagram: "logo/clearspace-diagram.svg",
+    // Motion foundation: the animatable centerline + analytic draw timing.
+    // Draw order G→B→D (neutral loop → primary top loop → primary descender),
+    // one continuous gesture from the bottom back to the bottom (seamless loop).
+    motion: {
+      centerline: ["logo/mark-centerline-light.svg", "logo/mark-centerline-dark.svg", "logo/mark-centerline-mono.svg"],
+      animated: ["logo/mark-animated-light.svg", "logo/mark-animated-dark.svg"],
+      lockups: [
+        "logo/lockup-horizontal-animated-light.svg",
+        "logo/lockup-horizontal-animated-dark.svg",
+        "logo/lockup-vertical-animated-light.svg",
+        "logo/lockup-vertical-animated-dark.svg",
+      ],
+      variants: [
+        "logo/mark-flowdash-light.svg",
+        "logo/mark-flowdash-dark.svg",
+        "logo/mark-pulse-light.svg",
+        "logo/mark-pulse-dark.svg",
+        "logo/mark-assemble-light.svg",
+        "logo/mark-assemble-dark.svg",
+      ],
+      lottie: lottie.map(([name]) => `logo/${name}.json`),
+      raster: motionRasterFiles, // GIF/WebP/APNG — only present when built with --motion-raster
+      timing: centerlineMotion,
+    },
     print: pdfs.map(([f]) => f),
     primitivesRaster: primitivePngs.flatMap(([name]) => [`logo/${name}.png`, `logo/${name}@2x.png`]),
     apps: manifestApps,
@@ -352,6 +507,23 @@ async function main() {
     writeFile(resolve(logoDir, "mark-duotone-light.svg"), variants.duotoneLight),
     writeFile(resolve(logoDir, "mark-duotone-dark.svg"), variants.duotoneDark),
     writeFile(resolve(logoDir, "mark-on-accent.svg"), variants.onAccent),
+    writeFile(resolve(logoDir, "mark-centerline-light.svg"), centerline.light),
+    writeFile(resolve(logoDir, "mark-centerline-dark.svg"), centerline.dark),
+    writeFile(resolve(logoDir, "mark-centerline-mono.svg"), centerline.mono),
+    writeFile(resolve(logoDir, "mark-animated-light.svg"), animated.light),
+    writeFile(resolve(logoDir, "mark-animated-dark.svg"), animated.dark),
+    writeFile(resolve(logoDir, "lockup-horizontal-animated-light.svg"), animLockups.hLight),
+    writeFile(resolve(logoDir, "lockup-horizontal-animated-dark.svg"), animLockups.hDark),
+    writeFile(resolve(logoDir, "lockup-vertical-animated-light.svg"), animLockups.vLight),
+    writeFile(resolve(logoDir, "lockup-vertical-animated-dark.svg"), animLockups.vDark),
+    writeFile(resolve(logoDir, "mark-flowdash-light.svg"), flowDash.light),
+    writeFile(resolve(logoDir, "mark-flowdash-dark.svg"), flowDash.dark),
+    writeFile(resolve(logoDir, "mark-pulse-light.svg"), pulse.light),
+    writeFile(resolve(logoDir, "mark-pulse-dark.svg"), pulse.dark),
+    writeFile(resolve(logoDir, "mark-assemble-light.svg"), assemble.light),
+    writeFile(resolve(logoDir, "mark-assemble-dark.svg"), assemble.dark),
+    ...lottie.map(([name, json]) => writeFile(resolve(logoDir, `${name}.json`), json)),
+    ...motionRasterWrites,
     writeFile(resolve(logoDir, "lockup-horizontal-light.svg"), lockups.hLight),
     writeFile(resolve(logoDir, "lockup-horizontal-dark.svg"), lockups.hDark),
     writeFile(resolve(logoDir, "lockup-vertical-light.svg"), lockups.vLight),
@@ -397,6 +569,9 @@ async function main() {
     }
   }
   process.stdout.write(`  logo      : mono(currentColor) + duotone-light/dark + on-accent (${logo.width}×${logo.height})\n`);
+  process.stdout.write(
+    `  motion    : draw-on + flow-dash/pulse/assemble + lockups h/v — animated SVG + Lottie (light/dark)${args.motionRaster ? ` + GIF/WebP/APNG raster (${motionRasterFiles.length / 3} clips)` : " — raster skipped (use --motion-raster)"}\n`,
+  );
   process.stdout.write(`  lockups   : horizontal + vertical × light/dark + mono(black/white) + clear-space padded\n`);
   process.stdout.write(`  primitives: marks/lockups/wordmark also as PNG (@1x + @2x) + clear-space diagram\n`);
   process.stdout.write(`  apps      : ${SURFACES.map((s) => s.name).join(", ")} (SVG + PNG${SURFACES.some((s) => s.webp) ? "/WebP" : ""} + favicon.ico)\n`);
