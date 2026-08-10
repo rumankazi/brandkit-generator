@@ -51,7 +51,11 @@
     ],
     "variants": [
       "logo/mark-flowdash-light.svg",
-      "logo/mark-flowdash-dark.svg"
+      "logo/mark-flowdash-dark.svg",
+      "logo/mark-pulse-light.svg",
+      "logo/mark-pulse-dark.svg",
+      "logo/mark-assemble-light.svg",
+      "logo/mark-assemble-dark.svg"
     ],
     "raster": [
       "logo/mark-animated-light.gif",
@@ -69,7 +73,15 @@
       "logo/mark-flowdash-light.gif",
       "logo/mark-flowdash-light.webp",
       "logo/mark-flowdash-dark.gif",
-      "logo/mark-flowdash-dark.webp"
+      "logo/mark-flowdash-dark.webp",
+      "logo/mark-pulse-light.gif",
+      "logo/mark-pulse-light.webp",
+      "logo/mark-pulse-dark.gif",
+      "logo/mark-pulse-dark.webp",
+      "logo/mark-assemble-light.gif",
+      "logo/mark-assemble-light.webp",
+      "logo/mark-assemble-dark.gif",
+      "logo/mark-assemble-dark.webp"
     ],
     "timing": {
       "pipe": 110,

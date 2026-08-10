@@ -11,6 +11,8 @@ import { renderAnimatedMark } from "../motion/animated-template.js";
 import { encodeAnimation, encodeSvgFrames, type EncodeResult } from "../motion/encode.js";
 import { bakeLockupFrames, lockupLayout, renderAnimatedLockup, type LockupColors } from "../motion/lockup-anim.js";
 import { bakeFlowDashFrames, renderFlowDash } from "../motion/flowdash.js";
+import { bakePulseFrames, renderPulse } from "../motion/pulse.js";
+import { bakeAssembleFrames, renderAssemble } from "../motion/assemble.js";
 import { padViewBox } from "../svg/util.js";
 import { faviconHeadSnippet, siteWebmanifest } from "../emit/webmanifest.js";
 import { renderPalettePreview, type AppPreview, type LogoBundle, type StickerPreview } from "../preview/palette-preview.js";
@@ -184,11 +186,17 @@ async function main() {
   // circulating the pipe (tuned values). Live SVG always; GIF/WebP gated.
   const flowDashParams = (t: typeof light) => ({ primary: t.accent, neutral: t.fg, count: 1, lenPct: 8, durationMs: 2400, opacity: 0.6, pulseColor: "#ffffff" });
   const flowDash = { light: renderFlowDash(flowDashParams(light)), dark: renderFlowDash(flowDashParams(dark)) };
+  // Variants — pulse (breathe) and assemble (pop-in). Tuned values are the module
+  // defaults, so colours are all that's needed. Live SVG always; GIF/WebP gated.
+  const pulseC = (t: typeof light) => ({ primary: t.accent, neutral: t.fg });
+  const pulse = { light: renderPulse(pulseC(light)), dark: renderPulse(pulseC(dark)) };
+  const assemble = { light: renderAssemble(pulseC(light)), dark: renderAssemble(pulseC(dark)) };
 
   // Raster exports (GIF + WebP) — baked frames; slow, so only with --motion-raster.
   let animRasterLight: EncodeResult | undefined, animRasterDark: EncodeResult | undefined;
   let lkHL: EncodeResult | undefined, lkHD: EncodeResult | undefined, lkVL: EncodeResult | undefined, lkVD: EncodeResult | undefined;
   let fdL: EncodeResult | undefined, fdD: EncodeResult | undefined;
+  let puL: EncodeResult | undefined, puD: EncodeResult | undefined, asL: EncodeResult | undefined, asD: EncodeResult | undefined;
   if (args.motionRaster) {
     const LK_N = 48;
     [animRasterLight, animRasterDark] = await Promise.all([
@@ -205,6 +213,14 @@ async function main() {
       encodeSvgFrames(bakeFlowDashFrames(48, { ...flowDashParams(light), background: light.bg }), { width: 480, durationMs: 2400 }),
       encodeSvgFrames(bakeFlowDashFrames(48, { ...flowDashParams(dark), background: dark.bg }), { width: 480, durationMs: 2400 }),
     ]);
+    [puL, puD] = await Promise.all([
+      encodeSvgFrames(bakePulseFrames(40, { ...pulseC(light), background: light.bg }), { width: 480, durationMs: 1500 }),
+      encodeSvgFrames(bakePulseFrames(40, { ...pulseC(dark), background: dark.bg }), { width: 480, durationMs: 1500 }),
+    ]);
+    [asL, asD] = await Promise.all([
+      encodeSvgFrames(bakeAssembleFrames(48, { ...pulseC(light), background: light.bg }), { width: 480, durationMs: 4000 }),
+      encodeSvgFrames(bakeAssembleFrames(48, { ...pulseC(dark), background: dark.bg }), { width: 480, durationMs: 4000 }),
+    ]);
   }
   const rasterPairs: Array<[string, EncodeResult | undefined]> = [
     ["mark-animated-light", animRasterLight],
@@ -215,6 +231,10 @@ async function main() {
     ["lockup-vertical-animated-dark", lkVD],
     ["mark-flowdash-light", fdL],
     ["mark-flowdash-dark", fdD],
+    ["mark-pulse-light", puL],
+    ["mark-pulse-dark", puD],
+    ["mark-assemble-light", asL],
+    ["mark-assemble-dark", asD],
   ];
   const motionRasterFiles = rasterPairs.flatMap(([name, res]) => (res ? [`logo/${name}.gif`, `logo/${name}.webp`] : []));
 
@@ -437,7 +457,14 @@ async function main() {
         "logo/lockup-vertical-animated-light.svg",
         "logo/lockup-vertical-animated-dark.svg",
       ],
-      variants: ["logo/mark-flowdash-light.svg", "logo/mark-flowdash-dark.svg"],
+      variants: [
+        "logo/mark-flowdash-light.svg",
+        "logo/mark-flowdash-dark.svg",
+        "logo/mark-pulse-light.svg",
+        "logo/mark-pulse-dark.svg",
+        "logo/mark-assemble-light.svg",
+        "logo/mark-assemble-dark.svg",
+      ],
       raster: motionRasterFiles, // GIF/WebP — only present when built with --motion-raster
       timing: centerlineMotion,
     },
@@ -466,6 +493,10 @@ async function main() {
     writeFile(resolve(logoDir, "lockup-vertical-animated-dark.svg"), animLockups.vDark),
     writeFile(resolve(logoDir, "mark-flowdash-light.svg"), flowDash.light),
     writeFile(resolve(logoDir, "mark-flowdash-dark.svg"), flowDash.dark),
+    writeFile(resolve(logoDir, "mark-pulse-light.svg"), pulse.light),
+    writeFile(resolve(logoDir, "mark-pulse-dark.svg"), pulse.dark),
+    writeFile(resolve(logoDir, "mark-assemble-light.svg"), assemble.light),
+    writeFile(resolve(logoDir, "mark-assemble-dark.svg"), assemble.dark),
     ...motionRasterWrites,
     writeFile(resolve(logoDir, "lockup-horizontal-light.svg"), lockups.hLight),
     writeFile(resolve(logoDir, "lockup-horizontal-dark.svg"), lockups.hDark),
