@@ -3,13 +3,16 @@ import { resolve } from "node:path";
 import { buildPalette, rampEntries, STEPS, type PaletteResult, type Ramp } from "../color/palette.js";
 import { ConfigError, loadConfig } from "../config/load.js";
 import { renderGuidelines } from "../emit/guidelines.js";
-import { buildLockups, buildWordmark } from "../lockup/build.js";
+import { buildClearSpaceDiagram, buildLockups, buildWordmark } from "../lockup/build.js";
 import { loadLogo } from "../logo/load.js";
 import { monoMap, recolorSvg } from "../logo/recolor.js";
+import { padViewBox } from "../svg/util.js";
 import { faviconHeadSnippet, siteWebmanifest } from "../emit/webmanifest.js";
-import { renderPalettePreview, type AppPreview, type LogoBundle } from "../preview/palette-preview.js";
-import { svgToPdf } from "../render/pdf.js";
-import { svgToPng, toAvif, toIco, toWebp } from "../render/raster.js";
+import { renderPalettePreview, type AppPreview, type LogoBundle, type StickerPreview } from "../preview/palette-preview.js";
+import { pngToPdfMm, svgToPdf } from "../render/pdf.js";
+import { pngSize, resizePng, stackPng, svgToPng, toAvif, toIco, toWebp } from "../render/raster.js";
+import { composeSticker } from "../stickers/compose.js";
+import { STICKER_DPI, STICKERS } from "../stickers/presets.js";
 import { composeSurface, type BrandArt } from "../surfaces/compose.js";
 import { SURFACES } from "../surfaces/presets.js";
 import { toDtcg } from "../tokens/dtcg.js";
@@ -157,6 +160,27 @@ async function main() {
     dark: buildWordmark(cfg.brand.title, cfg.typography.title.family, dark.fg),
   };
 
+  // Mono (single-color) lockups — one ink throughout, for print/stamps.
+  const monoLockups = buildLockups({
+    markLight: recolorSvg(logo.svg, monoMap(slotHexes, light.fg)),
+    markDark: recolorSvg(logo.svg, monoMap(slotHexes, dark.fg)),
+    logoW: logo.width,
+    logoH: logo.height,
+    inkLight: light.fg,
+    inkDark: dark.fg,
+    wordmark: cfg.brand.title,
+    titleFamily: cfg.typography.title.family,
+    gapRatio: cfg.layout.gap,
+  });
+
+  // Clear-space padded (drop-in) lockups + a clear-space spec diagram.
+  const clearPad = cfg.layout.clearSpace * 100; // 0.5 · X (lockup unit X = 100)
+  const lockupPadded = {
+    light: padViewBox(lockups.hLight, clearPad),
+    dark: padViewBox(lockups.hDark, clearPad),
+  };
+  const clearSpaceDiagram = buildClearSpaceDiagram(lockups.hLight, cfg.layout.clearSpace, light["muted-fg"], light.accent);
+
   const logoBundle: LogoBundle = {
     width: logo.width,
     height: logo.height,
@@ -179,6 +203,26 @@ async function main() {
   await rm(appsDir, { recursive: true, force: true });
   await mkdir(logoDir, { recursive: true });
   await mkdir(appsDir, { recursive: true });
+
+  // PNG exports of the primitives (mark, lockups, wordmark, diagram) — base + @2x.
+  const primitivePngs: Array<[string, string, number]> = [
+    ["mark-duotone-light", variants.duotoneLight, 512],
+    ["mark-duotone-dark", variants.duotoneDark, 512],
+    ["mark-on-accent", variants.onAccent, 512],
+    ["lockup-horizontal-light", lockups.hLight, 1200],
+    ["lockup-horizontal-dark", lockups.hDark, 1200],
+    ["lockup-vertical-light", lockups.vLight, 700],
+    ["lockup-vertical-dark", lockups.vDark, 700],
+    ["wordmark-light", wordmark.light, 1200],
+    ["wordmark-dark", wordmark.dark, 1200],
+    ["lockup-horizontal-mono-black", monoLockups.hLight, 1200],
+    ["lockup-horizontal-mono-white", monoLockups.hDark, 1200],
+    ["clearspace-diagram", clearSpaceDiagram, 1400],
+  ];
+  const logoPngWrites = primitivePngs.flatMap(([name, svg, width]) => [
+    writeFile(resolve(logoDir, `${name}.png`), svgToPng(svg, width)),
+    writeFile(resolve(logoDir, `${name}@2x.png`), svgToPng(svg, width * 2)),
+  ]);
 
   // Applications: compose each surface preset (SVG), then rasterize per its spec.
   const art: BrandArt = {
@@ -230,6 +274,33 @@ async function main() {
     }
   }
 
+  // Stickers: print-ready die-cut assets (bleed + cut line + safe margin).
+  const stickersDir = resolve(outDir, "stickers");
+  await rm(stickersDir, { recursive: true, force: true });
+  await mkdir(stickersDir, { recursive: true });
+  const px = (mm: number, dpi: number) => Math.round((mm / 25.4) * dpi);
+  const stickerPreview: StickerPreview[] = [];
+  const manifestStickers: Array<{ file: string; use: string }> = [];
+  const stickerWrites: Array<Promise<void>> = [];
+  const MASK_DPI = 150; // white contour is low-frequency — cheap here, then upscaled
+  for (const s of STICKERS) {
+    const sk = composeSticker(s, art, result.themes);
+    const artHi = svgToPng(sk.artSvg, px(sk.wMm, STICKER_DPI)); // crisp colour art @300dpi
+    const { width: W, height: H } = await pngSize(artHi);
+    const halo = await resizePng(svgToPng(sk.haloSvg, px(sk.wMm, MASK_DPI)), W, H);
+    const shadow = await resizePng(svgToPng(sk.shadowSvg, px(sk.wMm, MASK_DPI)), W, H);
+    const artwork = await stackPng(W, H, [halo, artHi]); // transparent die-cut sticker
+    const proof = await stackPng(W, H, [shadow, halo, artHi], "#e5e7eb");
+
+    stickerWrites.push(writeFile(resolve(stickersDir, `${s.name}.svg`), sk.svg));
+    stickerWrites.push(writeFile(resolve(stickersDir, `${s.name}@${STICKER_DPI}dpi.png`), artwork));
+    stickerWrites.push(pngToPdfMm(artwork, sk.wMm, sk.hMm).then((b) => writeFile(resolve(stickersDir, `${s.name}.pdf`), b)));
+    stickerWrites.push(writeFile(resolve(stickersDir, `${s.name}-proof.png`), proof));
+    stickerPreview.push({ name: s.name, use: s.use, proof: sk.svg });
+    manifestStickers.push({ file: `stickers/${s.name}.pdf`, use: `${s.use} — die-cut print PDF` });
+    manifestStickers.push({ file: `stickers/${s.name}@${STICKER_DPI}dpi.png`, use: `${s.use} — ${STICKER_DPI}dpi PNG (transparent)` });
+  }
+
   // Web integration: PWA manifest + a paste-ready favicon <head> snippet.
   manifestApps.push({ file: "apps/site.webmanifest", width: 0, height: 0, use: "PWA web-app manifest" });
   manifestApps.push({ file: "apps/favicon-tags.html", width: 0, height: 0, use: "Favicon <head> snippet" });
@@ -261,9 +332,16 @@ async function main() {
       "logo/lockup-horizontal-dark.svg",
       "logo/lockup-vertical-light.svg",
       "logo/lockup-vertical-dark.svg",
+      "logo/lockup-horizontal-mono-black.svg",
+      "logo/lockup-horizontal-mono-white.svg",
+      "logo/lockup-horizontal-light-clearspace.svg",
+      "logo/lockup-horizontal-dark-clearspace.svg",
     ],
+    diagram: "logo/clearspace-diagram.svg",
     print: pdfs.map(([f]) => f),
+    primitivesRaster: primitivePngs.flatMap(([name]) => [`logo/${name}.png`, `logo/${name}@2x.png`]),
     apps: manifestApps,
+    stickers: manifestStickers,
   };
 
   await Promise.all([
@@ -280,7 +358,14 @@ async function main() {
     writeFile(resolve(logoDir, "lockup-vertical-dark.svg"), lockups.vDark),
     writeFile(resolve(logoDir, "wordmark-light.svg"), wordmark.light),
     writeFile(resolve(logoDir, "wordmark-dark.svg"), wordmark.dark),
+    writeFile(resolve(logoDir, "lockup-horizontal-mono-black.svg"), monoLockups.hLight),
+    writeFile(resolve(logoDir, "lockup-horizontal-mono-white.svg"), monoLockups.hDark),
+    writeFile(resolve(logoDir, "lockup-horizontal-light-clearspace.svg"), lockupPadded.light),
+    writeFile(resolve(logoDir, "lockup-horizontal-dark-clearspace.svg"), lockupPadded.dark),
+    writeFile(resolve(logoDir, "clearspace-diagram.svg"), clearSpaceDiagram),
+    ...logoPngWrites,
     ...appWrites,
+    ...stickerWrites,
     writeFile(resolve(outDir, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n"),
     writeFile(
       resolve(outDir, "preview.html"),
@@ -290,6 +375,7 @@ async function main() {
         { title: cfg.typography.title, body: cfg.typography.body, mono: cfg.typography.mono },
         logoBundle,
         appsPreview,
+        stickerPreview,
       ),
     ),
     writeFile(resolve(outDir, "brand-spec.md"), brandSpec(result, cfg.brand.title)),
@@ -311,8 +397,10 @@ async function main() {
     }
   }
   process.stdout.write(`  logo      : mono(currentColor) + duotone-light/dark + on-accent (${logo.width}×${logo.height})\n`);
-  process.stdout.write(`  lockups   : horizontal + vertical × light/dark — outlined SVG, cap-height aligned\n`);
+  process.stdout.write(`  lockups   : horizontal + vertical × light/dark + mono(black/white) + clear-space padded\n`);
+  process.stdout.write(`  primitives: marks/lockups/wordmark also as PNG (@1x + @2x) + clear-space diagram\n`);
   process.stdout.write(`  apps      : ${SURFACES.map((s) => s.name).join(", ")} (SVG + PNG${SURFACES.some((s) => s.webp) ? "/WebP" : ""} + favicon.ico)\n`);
+  process.stdout.write(`  stickers  : ${STICKERS.map((s) => s.name.replace(/^sticker-/, "")).join(", ")} (print PDF + ${STICKER_DPI}dpi PNG + proof)\n`);
   process.stdout.write(`  print     : mark + horizontal lockups → vector PDF\n`);
   process.stdout.write(`  web       : site.webmanifest + favicon-tags.html (paste-ready)\n`);
   process.stdout.write(`\n  → ${cfg.output.dir}/tokens/tokens.json · tailwind.theme.css\n`);

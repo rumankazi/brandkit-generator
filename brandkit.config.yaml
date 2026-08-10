@@ -4,6 +4,7 @@
 
 brand:
   title: 'Pipeline Team'
+  # subtitle: 'CI/CD @ ASML'   # optional tagline — one line to add later (subtitle rendering is planned)
 
 logo:
   src: './assets/Pipeline Team Logo.svg'

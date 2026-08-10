@@ -100,5 +100,8 @@ Modular type scale, ratio **1.25**, base **16px**.
 | header | 1200×240 | Site / docs header |
 | footer | 1200×160 | Site / docs footer (on surface) |
 | banner | 1200×320 | Wide banner (dark theme) |
+| x-banner | 1500×500 | X/Twitter profile header (1500×500) |
+| linkedin-company | 1128×191 | LinkedIn company page banner (1128×191) |
+| linkedin-personal | 1584×396 | LinkedIn personal background (1584×396) |
 
 Every generated asset is indexed in `manifest.json` with dimensions and intended use.

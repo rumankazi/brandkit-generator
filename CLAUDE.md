@@ -6,7 +6,7 @@ A config-driven, **opinionated** brand-asset generator. Feed it a tiny brand con
 
 The tool embodies the judgment of an experienced UI/UX + logo/identity designer. **Users supply the minimum; the tool dictates the rest** from industry standards. Overrides are always possible, never required. See design principles and defaults in the sections below (kept in sync with agent memory: `brandkit-design-principles`, `brandkit-defaults`, `convention-over-config`).
 
-Required config is only: `brand.title`, `brand.logo`, `color.primary`. Everything else (subtitle, typography, layout ratios, palette, dark theme, surfaces) is optional and defaulted.
+Required config is only: `brand.title`, `logo.src`, `color.primary`. Everything else (subtitle, typography, layout ratios, palette, dark theme, surfaces) is optional and defaulted. Config is a single YAML file, so a one-line change (e.g. adding a subtitle) regenerates the whole kit.
 
 ## Non-negotiable design principles
 
@@ -37,7 +37,9 @@ Required config is only: `brand.title`, `brand.logo`, `color.primary`. Everythin
 | Dark theme | Auto-derived from light (OKLCH) unless overridden |
 | Contrast | WCAG 2.1 AA; auto-nudge derived fg; report ratios |
 
-## AI logo analysis (advisory, once, cached) — `brandkit analyze`
+## AI logo analysis (advisory, once, cached) — **DEFERRED / not yet built**
+
+> Status: designed but **not implemented**. Current builds are 100% deterministic with no API dependency; `logo.slots` are hand-mapped in the config (which is exactly what this stage would automate). Revisit when generalizing to a multi-brand tool. The design below is the intended future state.
 
 Static fill-mapping can't infer a logo's intent, so an optional AI pass supplies design judgment. **AI proposes; deterministic code makes all numbers and pixels — the AI never touches output.**
 
@@ -53,17 +55,22 @@ Stage [0] `analyze` is separate from `generate`: it produces the cached artifact
 
 ## Stack
 
-Node + TypeScript CLI. zod (validate) · fontkit (text metrics) · resvg-js (SVG→PNG) · sharp (resize/WebP/AVIF/ICO) · svg-to-pdfkit (PDF) · `@anthropic-ai/sdk` (analyze stage only, Opus 4.8 vision + structured outputs) · Google Fonts fetched & cached locally for deterministic offline builds. Config is YAML.
+Node + TypeScript CLI. zod (validate) · culori (OKLCH + WCAG) · fontkit (glyph outlining) · resvg-js (SVG→PNG) · sharp (resize/WebP/AVIF/ICO) · pdfkit + svg-to-pdfkit (PDF) · Google fonts **bundled via `@fontsource`** (outlined into assets — deterministic, offline). `@anthropic-ai/sdk` is for the deferred analyze stage only. Config is YAML. Command: `npm run generate` (with `--validate-only` / `--help`).
 
 ## Output layout (`dist/`)
 
 ```
-primitives/  mark · wordmark · subtitle          (isolated, both themes, svg+png)
-lockups/     {horizontal,vertical}-{mark,title,title-sub}   (both themes)
-apps/        favicon.ico + favicon-*.png + apple-touch + maskable · avatar · og-card · header · footer · banner
-tokens/      tokens.json (DTCG) · tailwind.theme.css
+logo/     mark-{mono,duotone-light,duotone-dark,on-accent} · logo-original · wordmark-{light,dark}
+          lockup-{horizontal,vertical}-{light,dark} · lockup-horizontal-mono-{black,white}
+          lockup-horizontal-{light,dark}-clearspace · clearspace-diagram
+          (every SVG above also emitted as PNG @1x/@2x; PDF for mark + h-lockups + wordmark)
+apps/     favicon.svg/.ico + favicon-*.png · apple-touch · maskable · avatar · og-card
+          header · footer · banner · x-banner · linkedin-* · site.webmanifest · favicon-tags.html
+tokens/   tokens.json (DTCG) · tailwind.theme.css
 preview.html · brand-spec.md · guidelines.md · manifest.json
 ```
+
+(Note: `subtitle` primitive and clear-space-padded variants of *every* asset are per the design principles; currently the wordmark + padded/mono variants exist for the lockup. Subtitle is deferred until a config subtitle is set.)
 
 ## Conventions
 

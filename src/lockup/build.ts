@@ -1,4 +1,4 @@
-import { innerSvg } from "../svg/util.js";
+import { innerSvg, viewBoxOf } from "../svg/util.js";
 import { loadFont } from "../type/fonts.js";
 import { layoutWordmark } from "../type/layout.js";
 
@@ -23,6 +23,34 @@ export function buildWordmark(text: string, titleFamily: string, ink: string): s
   const w = wm.bbox.maxX - wm.bbox.minX;
   const h = wm.bbox.maxY - wm.bbox.minY;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${r(w)}" height="${r(h)}" viewBox="${r(wm.bbox.minX)} ${r(wm.bbox.minY)} ${r(w)} ${r(h)}" fill="none"><path d="${wm.d}" fill="${ink}"/></svg>\n`;
+}
+
+/**
+ * Clear-space diagram: the lockup with a dashed boundary at its tight bounds and
+ * faint 0.5·X squares in the four margin corners, visualizing the exclusion zone.
+ * Purely geometric (no text), so it rasterizes without fonts.
+ */
+export function buildClearSpaceDiagram(lockupSvg: string, clearSpaceRatio: number, guide: string, unitFill: string): string {
+  const p = viewBoxOf(lockupSvg).split(/\s+/).map(Number);
+  const x = p[0] ?? 0;
+  const y = p[1] ?? 0;
+  const w = p[2] ?? 100;
+  const h = p[3] ?? 100;
+  const pad = clearSpaceRatio * X; // 0.5 · X exclusion zone
+  const nx = x - pad;
+  const ny = y - pad;
+  const nw = w + 2 * pad;
+  const nh = h + 2 * pad;
+  const corners = [
+    [nx, ny],
+    [nx + nw - pad, ny],
+    [nx, ny + nh - pad],
+    [nx + nw - pad, ny + nh - pad],
+  ]
+    .map(([sx, sy]) => `<rect x="${r(sx!)}" y="${r(sy!)}" width="${r(pad)}" height="${r(pad)}" fill="${unitFill}" opacity="0.16"/>`)
+    .join("");
+  const boundary = `<rect x="${r(x)}" y="${r(y)}" width="${r(w)}" height="${r(h)}" fill="none" stroke="${guide}" stroke-width="2" stroke-dasharray="7 6"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${r(nw)}" height="${r(nh)}" viewBox="${r(nx)} ${r(ny)} ${r(nw)} ${r(nh)}" fill="none">${corners}${innerSvg(lockupSvg)}${boundary}</svg>\n`;
 }
 
 export interface LockupParams {

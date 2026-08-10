@@ -25,3 +25,22 @@ export function toAvif(png: Buffer): Promise<Buffer> {
 export function toIco(pngs: Buffer[]): Promise<Buffer> {
   return pngToIco(pngs);
 }
+
+export async function pngSize(png: Buffer): Promise<{ width: number; height: number }> {
+  const m = await sharp(png).metadata();
+  return { width: m.width ?? 0, height: m.height ?? 0 };
+}
+
+/** Resize a PNG to exact dimensions (used to register composite layers). */
+export function resizePng(png: Buffer, width: number, height: number): Promise<Buffer> {
+  return sharp(png).resize(width, height).png().toBuffer();
+}
+
+/** Stack layers (bottom→top) on a transparent or solid-colour canvas. */
+export function stackPng(width: number, height: number, layers: Buffer[], bg?: string): Promise<Buffer> {
+  const background = bg ?? { r: 0, g: 0, b: 0, alpha: 0 };
+  return sharp({ create: { width, height, channels: 4, background } })
+    .composite(layers.map((input) => ({ input })))
+    .png()
+    .toBuffer();
+}

@@ -23,13 +23,44 @@
     "logo/lockup-horizontal-light.svg",
     "logo/lockup-horizontal-dark.svg",
     "logo/lockup-vertical-light.svg",
-    "logo/lockup-vertical-dark.svg"
+    "logo/lockup-vertical-dark.svg",
+    "logo/lockup-horizontal-mono-black.svg",
+    "logo/lockup-horizontal-mono-white.svg",
+    "logo/lockup-horizontal-light-clearspace.svg",
+    "logo/lockup-horizontal-dark-clearspace.svg"
   ],
+  "diagram": "logo/clearspace-diagram.svg",
   "print": [
     "logo/mark-duotone-light.pdf",
     "logo/lockup-horizontal-light.pdf",
     "logo/lockup-horizontal-dark.pdf",
     "logo/wordmark-light.pdf"
+  ],
+  "primitivesRaster": [
+    "logo/mark-duotone-light.png",
+    "logo/mark-duotone-light@2x.png",
+    "logo/mark-duotone-dark.png",
+    "logo/mark-duotone-dark@2x.png",
+    "logo/mark-on-accent.png",
+    "logo/mark-on-accent@2x.png",
+    "logo/lockup-horizontal-light.png",
+    "logo/lockup-horizontal-light@2x.png",
+    "logo/lockup-horizontal-dark.png",
+    "logo/lockup-horizontal-dark@2x.png",
+    "logo/lockup-vertical-light.png",
+    "logo/lockup-vertical-light@2x.png",
+    "logo/lockup-vertical-dark.png",
+    "logo/lockup-vertical-dark@2x.png",
+    "logo/wordmark-light.png",
+    "logo/wordmark-light@2x.png",
+    "logo/wordmark-dark.png",
+    "logo/wordmark-dark@2x.png",
+    "logo/lockup-horizontal-mono-black.png",
+    "logo/lockup-horizontal-mono-black@2x.png",
+    "logo/lockup-horizontal-mono-white.png",
+    "logo/lockup-horizontal-mono-white@2x.png",
+    "logo/clearspace-diagram.png",
+    "logo/clearspace-diagram@2x.png"
   ],
   "apps": [
     {
@@ -225,6 +256,78 @@
       "use": "Wide banner (dark theme) (@3x)"
     },
     {
+      "file": "apps/x-banner.svg",
+      "width": 1500,
+      "height": 500,
+      "use": "X/Twitter profile header (1500×500)"
+    },
+    {
+      "file": "apps/x-banner.png",
+      "width": 1500,
+      "height": 500,
+      "use": "X/Twitter profile header (1500×500)"
+    },
+    {
+      "file": "apps/x-banner@2x.png",
+      "width": 3000,
+      "height": 1000,
+      "use": "X/Twitter profile header (1500×500) (@2x)"
+    },
+    {
+      "file": "apps/x-banner@3x.png",
+      "width": 4500,
+      "height": 1500,
+      "use": "X/Twitter profile header (1500×500) (@3x)"
+    },
+    {
+      "file": "apps/linkedin-company.svg",
+      "width": 1128,
+      "height": 191,
+      "use": "LinkedIn company page banner (1128×191)"
+    },
+    {
+      "file": "apps/linkedin-company.png",
+      "width": 1128,
+      "height": 191,
+      "use": "LinkedIn company page banner (1128×191)"
+    },
+    {
+      "file": "apps/linkedin-company@2x.png",
+      "width": 2256,
+      "height": 382,
+      "use": "LinkedIn company page banner (1128×191) (@2x)"
+    },
+    {
+      "file": "apps/linkedin-company@3x.png",
+      "width": 3384,
+      "height": 573,
+      "use": "LinkedIn company page banner (1128×191) (@3x)"
+    },
+    {
+      "file": "apps/linkedin-personal.svg",
+      "width": 1584,
+      "height": 396,
+      "use": "LinkedIn personal background (1584×396)"
+    },
+    {
+      "file": "apps/linkedin-personal.png",
+      "width": 1584,
+      "height": 396,
+      "use": "LinkedIn personal background (1584×396)"
+    },
+    {
+      "file": "apps/linkedin-personal@2x.png",
+      "width": 3168,
+      "height": 792,
+      "use": "LinkedIn personal background (1584×396) (@2x)"
+    },
+    {
+      "file": "apps/linkedin-personal@3x.png",
+      "width": 4752,
+      "height": 1188,
+      "use": "LinkedIn personal background (1584×396) (@3x)"
+    },
+    {
       "file": "apps/site.webmanifest",
       "width": 0,
       "height": 0,
@@ -235,6 +338,32 @@
       "width": 0,
       "height": 0,
       "use": "Favicon <head> snippet"
+    }
+  ],
+  "stickers": [
+    {
+      "file": "stickers/sticker-mark.pdf",
+      "use": "Die-cut mark · white contour · ~45mm — die-cut print PDF"
+    },
+    {
+      "file": "stickers/sticker-mark@300dpi.png",
+      "use": "Die-cut mark · white contour · ~45mm — 300dpi PNG (transparent)"
+    },
+    {
+      "file": "stickers/sticker-lockup.pdf",
+      "use": "Die-cut horizontal lockup · white contour · ~90mm — die-cut print PDF"
+    },
+    {
+      "file": "stickers/sticker-lockup@300dpi.png",
+      "use": "Die-cut horizontal lockup · white contour · ~90mm — 300dpi PNG (transparent)"
+    },
+    {
+      "file": "stickers/sticker-lockup-vertical.pdf",
+      "use": "Die-cut vertical lockup · white contour · ~55mm — die-cut print PDF"
+    },
+    {
+      "file": "stickers/sticker-lockup-vertical@300dpi.png",
+      "use": "Die-cut vertical lockup · white contour · ~55mm — 300dpi PNG (transparent)"
     }
   ]
 }

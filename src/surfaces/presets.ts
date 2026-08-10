@@ -75,4 +75,22 @@ export const SURFACES: Surface[] = [
     w: 1200, h: 320, art: "lockup-h", theme: "dark", bg: "bg",
     pad: 0.34, raster: [1200], group: "banner",
   },
+  {
+    name: "x-banner",
+    use: "X/Twitter profile header (1500×500)",
+    w: 1500, h: 500, art: "lockup-h", theme: "dark", bg: "bg",
+    pad: 0.4, raster: [1500], group: "banner",
+  },
+  {
+    name: "linkedin-company",
+    use: "LinkedIn company page banner (1128×191)",
+    w: 1128, h: 191, art: "lockup-h", theme: "light", bg: "bg",
+    pad: 0.28, raster: [1128], group: "banner",
+  },
+  {
+    name: "linkedin-personal",
+    use: "LinkedIn personal background (1584×396)",
+    w: 1584, h: 396, art: "lockup-h", theme: "dark", bg: "bg",
+    pad: 0.42, raster: [1584], group: "banner",
+  },
 ];

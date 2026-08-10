@@ -176,12 +176,27 @@ function appsSection(apps: AppPreview[]): string {
   <div class="apps-banners">${banners.map(card).join("")}</div>`;
 }
 
+export interface StickerPreview {
+  name: string;
+  use: string;
+  proof: string; // proof SVG (cut + safe guides)
+}
+
+function stickersSection(stickers: StickerPreview[]): string {
+  const card = (s: StickerPreview) =>
+    `<figure class="fig"><div class="apptile">${s.proof}</div><figcaption>${esc(s.name.replace(/^sticker-/, ""))}</figcaption></figure>`;
+  return `
+  <h2>Stickers <span class="tag">print · bleed + red cut line + blue safe margin</span></h2>
+  <div class="apps-icons">${stickers.map(card).join("")}</div>`;
+}
+
 export function renderPalettePreview(
   result: PaletteResult,
   brandTitle: string,
   fonts: PreviewFonts,
   logo?: LogoBundle,
   apps?: AppPreview[],
+  stickers?: StickerPreview[],
 ): string {
   const ramps = [
     rampRow("brand", result.palette.primary),
@@ -284,6 +299,7 @@ export function renderPalettePreview(
   ${logo ? logoSection(logo, result) : ""}
   ${logo ? lockupSection(logo, result) : ""}
   ${apps && apps.length ? appsSection(apps) : ""}
+  ${stickers && stickers.length ? stickersSection(stickers) : ""}
 
   <h2>Tonal ramps</h2>
   ${ramps}
