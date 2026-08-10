@@ -28,6 +28,14 @@ test("keeps the proven reference structure: mask inside .pt so the reveal animat
   assert.match(svg, /prefers-reduced-motion/);
 });
 
+test("end-of-loop polish: wedge clears (pt_wedge) and only the visible pen retracts (pp2)", () => {
+  const svg = renderAnimatedMark({ primary: "#0969DA", neutral: "#0D1117" });
+  assert.match(svg, /@keyframes pt_wedge/, "wedge fade keyframe present");
+  assert.match(svg, /<path class="wedge"/, "start-wedge carries the fade class");
+  assert.match(svg, /@keyframes pt_pop2/, "visible-pen retract keyframe present");
+  assert.match(svg, /<g class="pp2">/, "visible pen uses pp2 (retract); mask tip stays on pp");
+});
+
 test("settle shows a clean whole-logo pulse: the revealed copy hides when .fin takes over", () => {
   const svg = renderAnimatedMark({ primary: "#0969DA", neutral: "#0D1117" });
   assert.match(svg, /@keyframes pt_reveal/);

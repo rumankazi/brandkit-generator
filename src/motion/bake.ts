@@ -134,6 +134,7 @@ const solidPen = "M-20 -55 L0 -55 L32 0 L0 55 L-20 55 Z";
 const maskTip = "M-20 -55 L32 0 L-20 55 Z";
 const RETRACT_START = 52; // pen shrinks into the tip over 52→56% instead of overshooting the settled arrow
 const RETRACT_END = 56;
+const WEDGE_END = 28; // the start-wedge only hides the descender tip early; after this the tip reveals as it's drawn
 
 /** A single baked frame at cycle fraction `f` ∈ [0,1). */
 export function bakeFrame(f: number, colors: BakeColors): string {
@@ -152,12 +153,14 @@ export function bakeFrame(f: number, colors: BakeColors): string {
   const pop = interp(POP, p);
   const retract = p < RETRACT_START ? 1 : Math.max(0, 1 - (p - RETRACT_START) / (RETRACT_END - RETRACT_START));
   const penScale = pop * retract; // shrink the leading arrowhead into the tip at the end
+  // Mask tip stays full size so the reveal completes (only the visible pen retracts);
+  // the start-wedge hides the descender tip only early, then clears so it reveals as drawn.
   const mask =
     `<mask id="bk" maskUnits="userSpaceOnUse" x="0" y="0" width="${VB}" height="${VB}">` +
     `<rect width="${VB}" height="${VB}" fill="black"/>` +
     `<path d="${TRAVEL_PATH}" fill="none" stroke="#fff" stroke-width="${MASK_STROKE}" stroke-linecap="butt" stroke-linejoin="round" stroke-dasharray="2880.6 2880.6" stroke-dashoffset="${dash}"/>` +
-    `${drawing ? place(`<path d="${maskTip}" fill="#fff"/>`, penScale) : ""}` +
-    `<path d="M336.5 973L297 914.5L336.5 855Z" fill="black"/></mask>`;
+    `${drawing ? place(`<path d="${maskTip}" fill="#fff"/>`, pop) : ""}` +
+    `${p < WEDGE_END ? `<path d="M336.5 973L297 914.5L336.5 855Z" fill="black"/>` : ""}</mask>`;
 
   const revOp = r2(interp(REVEAL, p));
   const finOp = r2(interp(FINAL, p));
