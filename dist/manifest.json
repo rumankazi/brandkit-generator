@@ -49,6 +49,10 @@
       "logo/lockup-vertical-animated-light.svg",
       "logo/lockup-vertical-animated-dark.svg"
     ],
+    "variants": [
+      "logo/mark-flowdash-light.svg",
+      "logo/mark-flowdash-dark.svg"
+    ],
     "raster": [
       "logo/mark-animated-light.gif",
       "logo/mark-animated-light.webp",
@@ -61,7 +65,11 @@
       "logo/lockup-vertical-animated-light.gif",
       "logo/lockup-vertical-animated-light.webp",
       "logo/lockup-vertical-animated-dark.gif",
-      "logo/lockup-vertical-animated-dark.webp"
+      "logo/lockup-vertical-animated-dark.webp",
+      "logo/mark-flowdash-light.gif",
+      "logo/mark-flowdash-light.webp",
+      "logo/mark-flowdash-dark.gif",
+      "logo/mark-flowdash-dark.webp"
     ],
     "timing": {
       "pipe": 110,
