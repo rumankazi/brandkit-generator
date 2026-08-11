@@ -1,8 +1,11 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { buildPalette, rampEntries, STEPS, type PaletteResult, type Ramp } from "../color/palette.js";
 import { ConfigError, loadConfig } from "../config/load.js";
 import { renderGuidelines } from "../emit/guidelines.js";
+import { renderSite } from "../emit/site.js";
+import { renderDocPage } from "../emit/doc-page.js";
 import { buildClearSpaceDiagram, buildLockups, buildWordmark } from "../lockup/build.js";
 import { loadLogo } from "../logo/load.js";
 import { monoMap, recolorSvg } from "../logo/recolor.js";
@@ -441,10 +444,24 @@ async function main() {
     ["logo/wordmark-light.pdf", wordmark.light],
   ];
 
+  // Raster clips (GIF/WebP/APNG) may be baked this run (--motion-raster) or
+  // preserved on disk from a prior motion build (fast builds don't wipe them);
+  // list whichever exist so the gallery keeps offering them on fast rebuilds.
+  const rasterOnDisk = rasterPairs
+    .flatMap(([name]) => [`logo/${name}.gif`, `logo/${name}.webp`, `logo/${name}.apng`])
+    .filter((f) => existsSync(resolve(outDir, f)));
+  const manifestRaster = motionRasterFiles.length ? motionRasterFiles : rasterOnDisk;
+
+  // Docs: markdown (repo/handoff) + styled HTML pages (the web view).
+  const guidelinesMd = renderGuidelines(cfg, result);
+  const brandSpecMd = brandSpec(result, cfg.brand.title);
+  const docFonts = { title: cfg.typography.title, body: cfg.typography.body, mono: cfg.typography.mono };
+  const docThemes = { light: result.themes.light, dark: result.themes.dark };
+
   const manifest = {
     brand: cfg.brand.title,
     generator: "brandkit-generator",
-    docs: ["guidelines.md", "brand-spec.md", "preview.html"],
+    docs: ["guidelines.html", "guidelines.md", "brand-spec.html", "brand-spec.md", "preview.html"],
     tokens: ["tokens/tokens.json", "tokens/tailwind.theme.css"],
     logo: [
       "logo/mark-mono.svg",
@@ -490,7 +507,7 @@ async function main() {
         "logo/mark-assemble-dark.svg",
       ],
       lottie: lottie.map(([name]) => `logo/${name}.json`),
-      raster: motionRasterFiles, // GIF/WebP/APNG — only present when built with --motion-raster
+      raster: manifestRaster, // GIF/WebP/APNG — baked with --motion-raster or preserved on disk
       timing: centerlineMotion,
     },
     print: pdfs.map(([f]) => f),
@@ -550,8 +567,43 @@ async function main() {
         stickerPreview,
       ),
     ),
-    writeFile(resolve(outDir, "brand-spec.md"), brandSpec(result, cfg.brand.title)),
-    writeFile(resolve(outDir, "guidelines.md"), renderGuidelines(cfg, result)),
+    writeFile(
+      resolve(outDir, "index.html"),
+      renderSite(manifest, {
+        brandTitle: cfg.brand.title,
+        subtitle: cfg.brand.subtitle,
+        fonts: { title: cfg.typography.title, body: cfg.typography.body, mono: cfg.typography.mono },
+        themes: result.themes,
+        heroLight: animLockups.hLight,
+        heroDark: animLockups.hDark,
+      }),
+    ),
+    writeFile(resolve(outDir, "guidelines.md"), guidelinesMd),
+    writeFile(
+      resolve(outDir, "guidelines.html"),
+      renderDocPage(guidelinesMd, "Brand Guidelines", {
+        brandTitle: cfg.brand.title,
+        fonts: docFonts,
+        themes: docThemes,
+        nav: [
+          ["Brand spec", "brand-spec.html"],
+          ["Colour preview", "preview.html"],
+        ],
+      }),
+    ),
+    writeFile(resolve(outDir, "brand-spec.md"), brandSpecMd),
+    writeFile(
+      resolve(outDir, "brand-spec.html"),
+      renderDocPage(brandSpecMd, "Brand Spec", {
+        brandTitle: cfg.brand.title,
+        fonts: docFonts,
+        themes: docThemes,
+        nav: [
+          ["Guidelines", "guidelines.html"],
+          ["Colour preview", "preview.html"],
+        ],
+      }),
+    ),
     writeFile(resolve(appsDir, "site.webmanifest"), siteWebmanifest(cfg, result.themes)),
     writeFile(resolve(appsDir, "favicon-tags.html"), faviconHeadSnippet(cfg, result.themes)),
     ...pdfs.map(([file, svg]) => svgToPdf(svg).then((b) => writeFile(resolve(outDir, file), b))),
@@ -582,7 +634,8 @@ async function main() {
   process.stdout.write(`  → ${cfg.output.dir}/logo/  (marks + 4 lockups, SVG + PDF)\n`);
   process.stdout.write(`  → ${cfg.output.dir}/apps/  (${SURFACES.length} surfaces: SVG + PNG/WebP + favicon.ico + webmanifest)\n`);
   process.stdout.write(`  → ${cfg.output.dir}/manifest.json\n`);
-  process.stdout.write(`  → ${cfg.output.dir}/preview.html   (open this)\n`);
+  process.stdout.write(`  → ${cfg.output.dir}/index.html     (download gallery — the published site)\n`);
+  process.stdout.write(`  → ${cfg.output.dir}/preview.html   (colour QA)\n`);
   process.stdout.write(`  → ${cfg.output.dir}/guidelines.md · brand-spec.md\n\n`);
 }
 

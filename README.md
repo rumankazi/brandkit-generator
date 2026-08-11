@@ -38,8 +38,21 @@ apps/     favicon.svg (theme-adaptive) + favicon-{16..512}.png + favicon.ico
           apple-touch-icon · maskable · avatar · og-card · header · footer · banner
           (SVG + PNG, WebP where useful, @2x/@3x for display surfaces)
 tokens/   tokens.json (DTCG) · tailwind.theme.css
-preview.html · brand-spec.md · guidelines.md · manifest.json
+index.html · preview.html · brand-spec.md · guidelines.md · manifest.json
 ```
+
+## Live brand kit (GitHub Pages)
+
+`generate` also emits **`dist/index.html`** — a self-contained, downloadable gallery of every
+asset (grouped into Logo, Lockups, Motion, Applications, Stickers, Tokens, Docs), with a
+per-format download button on each card and per-section + everything zips. Like the guidelines,
+it's *generated from the manifest*, so the site can never drift from the assets on disk.
+
+It's published automatically by [`.github/workflows/pages.yml`](.github/workflows/pages.yml):
+every push to `main` reruns `npm run generate`, builds the download bundles, and deploys `dist/`
+to Pages → **https://rumankazi.github.io/brandkit-generator/**.
+
+> One-time setup: repo **Settings → Pages → Build and deployment → Source = "GitHub Actions"**.
 
 ## How it works
 

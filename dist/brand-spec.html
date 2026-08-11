@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brand Spec — Pipeline Team</title>
+<link rel="icon" href="apps/favicon.svg">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
+  :root {
+    color-scheme: light dark;
+    --bg:#f6f7f9; --fg:#0b1120; --card:#fff; --line:#e2e8f0; --muted:#64748b; --accent:#0969DA;
+    --font-heading:'Space Grotesk',system-ui,sans-serif;
+    --font-body:'IBM Plex Sans',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,"SF Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){ :root{
+    --bg:#0b1120; --fg:#f8fafc; --card:#111827; --line:#1f2937; --muted:#94a3b8; --accent:#4493F8;
+  } }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:var(--font-body); font-size:15.5px; line-height:1.65; background:var(--bg); color:var(--fg); }
+  .bar { border-bottom:1px solid var(--line); background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); position:sticky; top:0; z-index:5; }
+  .bar-in { max-width:860px; margin:0 auto; padding:12px 24px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .bar a { font-size:13px; color:var(--muted); text-decoration:none; padding:5px 9px; border-radius:7px; }
+  .bar a:hover { color:var(--fg); background:var(--card); }
+  .bar a.home { color:var(--fg); font-weight:600; }
+  main { max-width:860px; margin:0 auto; padding:16px 24px 96px; }
+  h1 { font-family:var(--font-heading); font-size:30px; font-weight:700; letter-spacing:-0.02em; margin:28px 0 8px; }
+  h2 { font-family:var(--font-heading); font-size:21px; font-weight:700; letter-spacing:-0.01em; margin:40px 0 12px; padding-top:14px; border-top:1px solid var(--line); }
+  h3 { font-family:var(--font-heading); font-size:16px; font-weight:600; margin:26px 0 8px; }
+  p { margin:12px 0; }
+  ul { margin:12px 0; padding-left:22px; }
+  li { margin:5px 0; }
+  a { color:var(--accent); }
+  code { font-family:var(--font-mono); font-size:.88em; background:color-mix(in srgb, var(--muted) 16%, transparent); padding:1.5px 5px; border-radius:5px; }
+  hr { border:0; border-top:1px solid var(--line); margin:28px 0; }
+  em { color:var(--muted); }
+  .tablewrap { overflow-x:auto; margin:16px 0; border:1px solid var(--line); border-radius:12px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:9px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:color-mix(in srgb, var(--muted) 7%, transparent); }
+  tr:last-child td { border-bottom:0; }
+  td code, th code { background:transparent; padding:0; }
+</style></head>
+<body>
+  <nav class="bar"><div class="bar-in"><a class="home" href="index.html">← Brand kit</a><a href="guidelines.html">Guidelines</a><a href="preview.html">Colour preview</a></div></nav>
+  <main><h1>Pipeline Team — Brand spec (colors)</h1>
+<p>Generated from the brand config. Palette derived perceptually in OKLCH; every foreground/background pairing audited against WCAG.</p>
+<h2>Tonal ramps</h2>
+<h3>brand</h3>
+<div class="tablewrap"><table><thead><tr><th>50</th><th>100</th><th>200</th><th>300</th><th>400</th><th>500</th><th>600</th><th>700</th><th>800</th><th>900</th><th>950</th></tr></thead><tbody><tr><td>#f0f6ff</td><td>#ddebff</td><td>#c2dbff</td><td>#99c3ff</td><td>#5da0ff</td><td>#2c81f4</td><td>#0a67d5</td><td>#0051ae</td><td>#003c85</td><td>#002a61</td><td>#001b44</td></tr></tbody></table></div>
+<h3>neutral</h3>
+<div class="tablewrap"><table><thead><tr><th>50</th><th>100</th><th>200</th><th>300</th><th>400</th><th>500</th><th>600</th><th>700</th><th>800</th><th>900</th><th>950</th></tr></thead><tbody><tr><td>#f4f5f8</td><td>#e7eaee</td><td>#d6d9de</td><td>#bcc1c7</td><td>#9ba0a7</td><td>#80858e</td><td>#676d75</td><td>#51565e</td><td>#3c4147</td><td>#2a2d32</td><td>#1b1e21</td></tr></tbody></table></div>
+<h2>Contrast audit</h2>
+<div class="tablewrap"><table><thead><tr><th>Theme</th><th>Pairing</th><th>Foreground</th><th>Background</th><th>Ratio</th><th>Required</th><th>Status</th></tr></thead><tbody><tr><td>light</td><td>text on bg</td><td>#0D1117</td><td>#FFFFFF</td><td>18.92:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>light</td><td>muted text on bg</td><td>#676d75</td><td>#FFFFFF</td><td>5.22:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>light</td><td>text on surface</td><td>#0D1117</td><td>#e7eaee</td><td>15.68:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>light</td><td>primary label</td><td>#f4f5f8</td><td>#0969DA</td><td>4.76:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>light</td><td>accent label</td><td>#f4f5f8</td><td>#0969DA</td><td>4.76:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>dark</td><td>text on bg</td><td>#F0F6FC</td><td>#0D1117</td><td>17.39:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>dark</td><td>muted text on bg</td><td>#9ba0a7</td><td>#0D1117</td><td>7.19:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>dark</td><td>text on surface</td><td>#F0F6FC</td><td>#2a2d32</td><td>12.69:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>dark</td><td>primary label</td><td>#1b1e21</td><td>#4493F8</td><td>5.40:1</td><td>4.5:1</td><td>✅</td></tr><tr><td>dark</td><td>accent label</td><td>#1b1e21</td><td>#4493F8</td><td>5.40:1</td><td>4.5:1</td><td>✅</td></tr></tbody></table></div></main>
+</body></html>

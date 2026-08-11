@@ -3,3 +3,6 @@ build/
 .cache/
 *.log
 .DS_Store
+
+# Download bundles are built in the Pages workflow, not committed.
+dist/*.zip

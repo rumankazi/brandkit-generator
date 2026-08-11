@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline Team — Brand Kit</title>
+<meta name="description" content="Downloadable brand kit for Pipeline Team — logo, lockups, motion, applications, tokens.">
+<link rel="icon" href="apps/favicon.svg">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
+  :root {
+    color-scheme: light dark;
+    --bg:#f6f7f9; --fg:#0b1120; --card:#fff; --line:#e2e8f0; --muted:#64748b;
+    --accent:#0969DA; --accent-fg:#f4f5f8;
+    --hero-bg:#FFFFFF; --hero-fg:#0D1117;
+    --tile-a:#e9edf1; --tile-b:#f6f7f9; --tile-dark:#0D1117;
+    --shadow-sm:0 1px 2px rgba(15,23,42,.06),0 2px 6px rgba(15,23,42,.05);
+    --shadow-md:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.09);
+    --font-heading:'Space Grotesk',system-ui,sans-serif;
+    --font-body:'IBM Plex Sans',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,"SF Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){ :root{
+    --bg:#0b1120; --fg:#f8fafc; --card:#111827; --line:#1f2937; --muted:#94a3b8;
+    --accent:#4493F8; --accent-fg:#1b1e21;
+    --hero-bg:#0D1117; --hero-fg:#F0F6FC;
+    --tile-a:#0f1526; --tile-b:#131a2c; --tile-dark:#FFFFFF;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.4);
+    --shadow-md:0 2px 4px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.5);
+  } }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:var(--font-body); font-size:15px; line-height:1.55; background:var(--bg); color:var(--fg); }
+  a { color:inherit; }
+  .wrap { max-width:1120px; margin:0 auto; padding:0 24px 96px; }
+  /* hero */
+  .hero { background:var(--hero-bg); color:var(--hero-fg); border-bottom:1px solid var(--line); }
+  .hero-in { max-width:1120px; margin:0 auto; padding:56px 24px 48px; }
+  .hero .mark { display:block; }
+  .hero .mark.light { display:block; } .hero .mark.dark { display:none; }
+  @media (prefers-color-scheme: dark){ .hero .mark.light{ display:none; } .hero .mark.dark{ display:block; } }
+  .hero .mark svg { height:88px; width:auto; max-width:100%; display:block; }
+  .hero h1 { font-family:var(--font-heading); font-size:32px; font-weight:700; letter-spacing:-0.02em; margin:26px 0 6px; }
+  .hero .tagline { color:var(--muted); margin:0 0 20px; font-size:16px; }
+  .stats { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; }
+  .stat { font-family:var(--font-mono); font-size:12px; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:4px 11px; }
+  .cta { display:inline-flex; align-items:center; gap:7px; background:var(--accent); color:var(--accent-fg); font-weight:600; font-size:14px; padding:8px 16px; border-radius:9px; text-decoration:none; box-shadow:var(--shadow-sm); }
+  .cta:hover { filter:brightness(1.05); }
+  .ghlink { font-size:13px; color:var(--muted); text-decoration:none; margin-left:2px; }
+  /* toolbar */
+  .toolbar { position:sticky; top:0; z-index:5; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+  .toolbar-in { max-width:1120px; margin:0 auto; padding:12px 24px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .search { flex:1; min-width:200px; font:inherit; font-size:14px; padding:9px 13px; border:1px solid var(--line); border-radius:9px; background:var(--card); color:var(--fg); }
+  .search:focus { outline:2px solid var(--accent); outline-offset:1px; }
+  .navlinks { display:flex; gap:2px; flex-wrap:wrap; }
+  .navlinks a { font-size:12.5px; color:var(--muted); text-decoration:none; padding:6px 9px; border-radius:7px; }
+  .navlinks a:hover { color:var(--fg); background:var(--card); }
+  /* sections */
+  .sec { padding-top:44px; }
+  .sec-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
+  h2 { font-family:var(--font-heading); font-size:20px; font-weight:700; letter-spacing:-0.01em; margin:0; }
+  h2 .count { font-family:var(--font-mono); font-size:12px; font-weight:400; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:1px 8px; vertical-align:middle; margin-left:4px; }
+  .blurb { color:var(--muted); margin:4px 0 0; font-size:13.5px; max-width:60ch; }
+  .zip { flex:none; font-size:13px; font-weight:600; text-decoration:none; color:var(--fg); border:1px solid var(--line); border-radius:9px; padding:8px 14px; background:var(--card); box-shadow:var(--shadow-sm); white-space:nowrap; }
+  .zip:hover { border-color:var(--accent); color:var(--accent); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:18px; }
+  .card { margin:0; border:1px solid var(--line); border-radius:14px; background:var(--card); box-shadow:var(--shadow-sm); overflow:hidden; display:flex; flex-direction:column; transition:box-shadow .15s, transform .15s; }
+  .card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+  .tile { position:relative; min-height:150px; padding:22px; display:flex; align-items:center; justify-content:center; background:repeating-conic-gradient(var(--tile-a) 0% 25%, var(--tile-b) 0% 50%) 50% / 18px 18px; }
+  .tile.dark { background:var(--tile-dark); }
+  .tile img { max-width:100%; max-height:150px; width:auto; height:auto; display:block; }
+  .glyph { font-family:var(--font-mono); font-size:22px; font-weight:700; color:var(--muted); letter-spacing:.02em; }
+  .anim { position:absolute; top:10px; right:10px; font-family:var(--font-mono); font-size:10px; font-weight:600; color:var(--accent-fg); background:var(--accent); border-radius:999px; padding:2px 8px; }
+  figcaption { font-size:13px; font-weight:600; padding:12px 14px 2px; }
+  .dls { display:flex; flex-wrap:wrap; gap:6px; padding:8px 14px 14px; margin-top:auto; }
+  .dl { font-family:var(--font-mono); font-size:11px; text-decoration:none; color:var(--fg); border:1px solid var(--line); border-radius:7px; padding:4px 9px; background:var(--bg); }
+  .dl:hover { border-color:var(--accent); color:var(--accent); }
+  .dl.open { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  .dl.open:hover { background:var(--accent); color:var(--accent-fg); }
+  .empty { color:var(--muted); font-size:14px; padding:40px 0; text-align:center; display:none; }
+  footer { color:var(--muted); font-size:12.5px; text-align:center; padding:40px 24px 0; border-top:1px solid var(--line); margin-top:56px; }
+  footer code { font-family:var(--font-mono); }
+  @media (max-width:640px){ .hero h1{ font-size:26px; } .hero .mark svg{ height:64px; } }
+</style></head>
+<body>
+  <header class="hero">
+    <div class="hero-in">
+      <span class="mark light"><svg xmlns="http://www.w3.org/2000/svg" width="603.69" height="100" viewBox="0 0 603.69 100" fill="none"><style>
+    @keyframes lk_wm{0%{opacity:0;transform:translate(10px,0)}56%{opacity:0;transform:translate(10px,0)}66%{opacity:1;transform:translate(0,0)}88.5%{opacity:1;transform:translate(0,0)}96.5%{opacity:0;transform:translate(0,0)}100%{opacity:0}}
+    .lk_wm{animation:lk_wm 3000ms linear infinite;transform-box:fill-box}
+    @media (prefers-reduced-motion:reduce){.lk_wm{animation:none;opacity:1;transform:none}}
+  </style><svg x="-6.02" y="-6.02" width="112.04" height="112.04" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+<!-- Pipeline Team animated mark v2. From loop completion onward, the frame is
+     the raw original artwork paths - no composite layers at the junction. -->
+<style>
+@keyframes pt_draw{0.00%{stroke-dashoffset:2880.6px}1.00%{stroke-dashoffset:2873.0px}2.00%{stroke-dashoffset:2865.3px}3.00%{stroke-dashoffset:2857.7px}4.00%{stroke-dashoffset:2850.0px}5.00%{stroke-dashoffset:2842.2px}6.00%{stroke-dashoffset:2834.2px}7.00%{stroke-dashoffset:2826.0px}8.00%{stroke-dashoffset:2817.2px}9.00%{stroke-dashoffset:2807.7px}10.00%{stroke-dashoffset:2797.2px}11.00%{stroke-dashoffset:2785.3px}12.00%{stroke-dashoffset:2771.5px}13.00%{stroke-dashoffset:2755.2px}14.00%{stroke-dashoffset:2735.8px}15.00%{stroke-dashoffset:2712.6px}16.00%{stroke-dashoffset:2684.6px}17.00%{stroke-dashoffset:2650.8px}18.00%{stroke-dashoffset:2610.1px}19.00%{stroke-dashoffset:2561.2px}20.00%{stroke-dashoffset:2502.6px}21.00%{stroke-dashoffset:2432.8px}22.00%{stroke-dashoffset:2349.8px}23.00%{stroke-dashoffset:2251.9px}24.00%{stroke-dashoffset:2136.8px}25.00%{stroke-dashoffset:2002.3px}26.00%{stroke-dashoffset:1845.7px}27.00%{stroke-dashoffset:1664.4px}28.00%{stroke-dashoffset:1455.3px}29.00%{stroke-dashoffset:1246.2px}30.00%{stroke-dashoffset:1064.9px}31.00%{stroke-dashoffset:908.3px}32.00%{stroke-dashoffset:773.8px}33.00%{stroke-dashoffset:658.7px}34.00%{stroke-dashoffset:560.8px}35.00%{stroke-dashoffset:477.8px}36.00%{stroke-dashoffset:408.0px}37.00%{stroke-dashoffset:349.4px}38.00%{stroke-dashoffset:300.5px}39.00%{stroke-dashoffset:259.8px}40.00%{stroke-dashoffset:226.0px}41.00%{stroke-dashoffset:198.0px}42.00%{stroke-dashoffset:174.8px}43.00%{stroke-dashoffset:155.4px}44.00%{stroke-dashoffset:139.1px}45.00%{stroke-dashoffset:125.3px}46.00%{stroke-dashoffset:113.4px}47.00%{stroke-dashoffset:102.9px}48.00%{stroke-dashoffset:93.4px}49.00%{stroke-dashoffset:84.6px}50.00%{stroke-dashoffset:76.4px}51.00%{stroke-dashoffset:68.4px}52.00%{stroke-dashoffset:60.6px}53.00%{stroke-dashoffset:52.9px}54.00%{stroke-dashoffset:45.3px}55.00%{stroke-dashoffset:37.6px}56.00%{stroke-dashoffset:30.0px}56.00%{stroke-dashoffset:0px}100%{stroke-dashoffset:0px}}
+@keyframes pt_travel{0.00%{offset-distance:0.000%}1.00%{offset-distance:0.000%}2.00%{offset-distance:0.220%}3.00%{offset-distance:0.488%}4.00%{offset-distance:0.758%}5.00%{offset-distance:1.031%}6.00%{offset-distance:1.311%}7.00%{offset-distance:1.601%}8.00%{offset-distance:1.908%}9.00%{offset-distance:2.241%}10.00%{offset-distance:2.610%}11.00%{offset-distance:3.028%}12.00%{offset-distance:3.513%}13.00%{offset-distance:4.083%}14.00%{offset-distance:4.762%}15.00%{offset-distance:5.577%}16.00%{offset-distance:6.559%}17.00%{offset-distance:7.744%}18.00%{offset-distance:9.172%}19.00%{offset-distance:10.888%}20.00%{offset-distance:12.944%}21.00%{offset-distance:15.395%}22.00%{offset-distance:18.304%}23.00%{offset-distance:21.739%}24.00%{offset-distance:25.776%}25.00%{offset-distance:30.496%}26.00%{offset-distance:35.989%}27.00%{offset-distance:42.350%}28.00%{offset-distance:49.684%}29.00%{offset-distance:57.018%}30.00%{offset-distance:63.380%}31.00%{offset-distance:68.872%}32.00%{offset-distance:73.592%}33.00%{offset-distance:77.629%}34.00%{offset-distance:81.065%}35.00%{offset-distance:83.974%}36.00%{offset-distance:86.425%}37.00%{offset-distance:88.480%}38.00%{offset-distance:90.197%}39.00%{offset-distance:91.624%}40.00%{offset-distance:92.809%}41.00%{offset-distance:93.791%}42.00%{offset-distance:94.606%}43.00%{offset-distance:95.285%}44.00%{offset-distance:95.856%}45.00%{offset-distance:96.340%}46.00%{offset-distance:96.759%}47.00%{offset-distance:97.128%}48.00%{offset-distance:97.461%}49.00%{offset-distance:97.768%}50.00%{offset-distance:98.058%}51.00%{offset-distance:98.337%}52.00%{offset-distance:98.610%}53.00%{offset-distance:98.880%}54.00%{offset-distance:98.965%}55.00%{offset-distance:98.965%}56.00%{offset-distance:98.965%}56.00%{offset-distance:98.965%}100%{offset-distance:98.965%}}
+@keyframes pt_pop{0.00%{transform:scale(0.200)}1.00%{transform:scale(0.770)}2.00%{transform:scale(1.101)}3.00%{transform:scale(1.147)}5.00%{transform:scale(1.000)}6.50%{transform:scale(1.000)}100%{transform:scale(1)}}
+@keyframes pt_pop2{0.00%{transform:scale(0.200)}1.00%{transform:scale(0.770)}2.00%{transform:scale(1.101)}3.00%{transform:scale(1.147)}5.00%{transform:scale(1.000)}6.50%{transform:scale(1.000)}53.00%{transform:scale(1)}58.00%{transform:scale(0)}100%{transform:scale(0)}}
+@keyframes pt_wedge{0.00%{opacity:1}53.00%{opacity:1}55.00%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_settle{0%{transform:scale(1)}56.00%{transform:scale(1)}58.00%{transform:scale(1.0112)}60.00%{transform:scale(1.0168)}62.00%{transform:scale(1.0167)}64.00%{transform:scale(1.0125)}66.00%{transform:scale(1.0067)}68.00%{transform:scale(1.0019)}70.00%{transform:scale(1.0000)}100%{transform:scale(1)}}
+@keyframes pt_final{0.00%{opacity:0}55.80%{opacity:0}56.00%{opacity:1}100.00%{opacity:1}}
+@keyframes pt_reveal{0.00%{opacity:1}55.80%{opacity:1}56.00%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_cycle{0.00%{opacity:1}88.50%{opacity:1}90.50%{opacity:0.85}92.50%{opacity:0.5}94.50%{opacity:0.15}96.50%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_chevA{0.00%{opacity:1}26.23%{opacity:1}26.43%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_chevS{0.00%{opacity:0}26.23%{opacity:0}26.43%{opacity:1}32.72%{opacity:1}32.92%{opacity:0}34.43%{opacity:0}34.63%{opacity:1}50.39%{opacity:1}50.59%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_chevU{0.00%{opacity:0}32.72%{opacity:0}32.92%{opacity:1}34.43%{opacity:1}34.63%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_solid{0.00%{opacity:0}50.39%{opacity:0}50.59%{opacity:1}55.80%{opacity:1}56.00%{opacity:0}100.00%{opacity:0}}
+.pt *{animation-duration:3s;animation-iteration-count:infinite;animation-timing-function:linear;}
+.dl{animation-name:pt_draw;}
+.rev{animation-name:pt_reveal;}
+.fin{animation-name:pt_final,pt_settle;transform-origin:512px 512px;transform-box:view-box;}
+.cyc{animation-name:pt_cycle;}
+.ar{offset-path:path('M313 914.5H255A145 145 0 0 1 110 769V657A145 145 0 0 1 255 512H769A145 145 0 0 0 914 367V255A145 145 0 0 0 769 110H657A145 145 0 0 0 512 255V769A145 145 0 0 1 367 914.5H305');offset-rotate:auto;animation-name:pt_travel;}
+.pp{animation-name:pt_pop;transform-box:view-box;transform-origin:0px 0px;}
+.pp2{animation-name:pt_pop2;transform-box:view-box;transform-origin:0px 0px;}
+.wedge{animation-name:pt_wedge;}
+.cA{animation-name:pt_chevA;}
+.cS{animation-name:pt_chevS;}
+.cU{animation-name:pt_chevU;}
+.sS{animation-name:pt_solid;}
+
+@media (prefers-reduced-motion: reduce){
+ .pt *{animation:none !important;}
+ .fin{opacity:1 !important;}
+ .rev,.cA,.cS,.cU,.sS{opacity:0 !important;}
+}
+</style>
+<g class="pt">
+<g class="cyc">
+<g class="ar"><g class="cU" style="opacity:0"><g class="pp"><path d="M0 -55 L32 0 L0 55 L9 0 Z" fill="#0969DA"/></g></g></g>
+<mask id="ptrv"><rect width="1024" height="1024" fill="black"/>
+<path class="dl" d="M313 914.5H255A145 145 0 0 1 110 769V657A145 145 0 0 1 255 512H769A145 145 0 0 0 914 367V255A145 145 0 0 0 769 110H657A145 145 0 0 0 512 255V769A145 145 0 0 1 367 914.5H305" fill="none" stroke="white" stroke-width="134"
+ stroke-dasharray="2880.6 2880.6" stroke-dashoffset="2880.6"/>
+<g class="ar"><g class="pp"><path d="M-20 -55 L32 0 L-20 55 Z" fill="white" stroke="white" stroke-width="10"/></g></g>
+<path class="wedge" d="M336.5 973L297 914.5L336.5 855Z" fill="black"/></mask>
+<g class="rev" mask="url(#ptrv)"><path d="M567 769C567 879.457 477.457 969 367 969H334.016L302.548 914.497L334.589 859H367C416.706 859 457 818.706 457 769V587H567V769Z" fill="#0969DA"/><path d="M769 55C879.457 55 969 144.543 969 255V367C969 477.457 879.457 567 769 567H712.111L743.549 512.551L711.477 457H769C818.706 457 859 416.706 859 367V255C859 205.294 818.706 165 769 165H657C607.294 165 567 205.294 567 255V437H457V255C457 144.543 546.543 55 657 55H769Z" fill="#0969DA"/><path d="M688.383 457L720.454 512.551L689.018 567H255C205.294 567 165 607.294 165 657V769C165 818.706 205.294 859 255 859H311.494L279.453 914.498L310.921 969H255C144.543 969 55 879.457 55 769V657C55 546.543 144.543 457 255 457H688.383Z" fill="#0D1117"/></g>
+<g class="ar"><g class="pp2">
+<g class="cA"><path d="M0 -55 L32 0 L0 55 L9 0 Z" fill="#0D1117"/></g>
+<g class="cS" style="opacity:0"><path d="M0 -55 L32 0 L0 55 L9 0 Z" fill="#0969DA"/></g>
+<g class="sS" style="opacity:0"><path d="M-20 -55 L0 -55 L32 0 L0 55 L-20 55 Z" fill="#0969DA"/></g>
+</g></g>
+<g class="fin"><path d="M567 769C567 879.457 477.457 969 367 969H334.016L302.548 914.497L334.589 859H367C416.706 859 457 818.706 457 769V587H567V769Z" fill="#0969DA"/><path d="M769 55C879.457 55 969 144.543 969 255V367C969 477.457 879.457 567 769 567H712.111L743.549 512.551L711.477 457H769C818.706 457 859 416.706 859 367V255C859 205.294 818.706 165 769 165H657C607.294 165 567 205.294 567 255V437H457V255C457 144.543 546.543 55 657 55H769Z" fill="#0969DA"/><path d="M688.383 457L720.454 512.551L689.018 567H255C205.294 567 165 607.294 165 657V769C165 818.706 205.294 859 255 859H311.494L279.453 914.498L310.921 969H255C144.543 969 55 879.457 55 769V657C55 546.543 144.543 457 255 457H688.383Z" fill="#0D1117"/></g>
+</g>
+</g>
+</svg>
+<g transform="translate(130 75.2)"><g class="lk_wm"><path d="M4.75 0L4.75 -50.4L25.49 -50.4Q30.24 -50.4 33.88 -48.49Q37.51 -46.58 39.56 -43.13Q41.62 -39.67 41.62 -34.92L41.62 -33.91Q41.62 -29.23 39.49 -25.74Q37.37 -22.25 33.73 -20.34Q30.1 -18.43 25.49 -18.43L14.26 -18.43L14.26 0ZM14.26 -27.07L24.55 -27.07Q27.94 -27.07 30.02 -28.94Q32.11 -30.82 32.11 -34.06L32.11 -34.78Q32.11 -38.02 30.02 -39.89Q27.94 -41.76 24.55 -41.76L14.26 -41.76Z M48.53 0L48.53 -35.71L57.6 -35.71L57.6 0ZM53.06 -39.89Q50.62 -39.89 48.92 -41.47Q47.23 -43.06 47.23 -45.65Q47.23 -48.24 48.92 -49.82Q50.62 -51.41 53.06 -51.41Q55.58 -51.41 57.24 -49.82Q58.9 -48.24 58.9 -45.65Q58.9 -43.06 57.24 -41.47Q55.58 -39.89 53.06 -39.89Z M67.68 14.4L67.68 -35.71L76.61 -35.71L76.61 -31.39L77.9 -31.39Q79.13 -33.48 81.72 -35.1Q84.31 -36.72 89.14 -36.72Q93.46 -36.72 97.13 -34.6Q100.8 -32.47 103.03 -28.37Q105.26 -24.26 105.26 -18.43L105.26 -17.28Q105.26 -11.45 103.03 -7.34Q100.8 -3.24 97.13 -1.12Q93.46 1.01 89.14 1.01Q85.9 1.01 83.7 0.25Q81.5 -0.5 80.17 -1.69Q78.84 -2.88 78.05 -4.1L76.75 -4.1L76.75 14.4ZM86.4 -6.91Q90.65 -6.91 93.42 -9.61Q96.19 -12.31 96.19 -17.5L96.19 -18.22Q96.19 -23.4 93.38 -26.1Q90.58 -28.8 86.4 -28.8Q82.22 -28.8 79.42 -26.1Q76.61 -23.4 76.61 -18.22L76.61 -17.5Q76.61 -12.31 79.42 -9.61Q82.22 -6.91 86.4 -6.91Z M129.89 1.01Q124.56 1.01 120.49 -1.26Q116.42 -3.53 114.16 -7.67Q111.89 -11.81 111.89 -17.42L111.89 -18.29Q111.89 -23.9 114.12 -28.04Q116.35 -32.18 120.38 -34.45Q124.42 -36.72 129.74 -36.72Q135 -36.72 138.89 -34.38Q142.78 -32.04 144.94 -27.9Q147.1 -23.76 147.1 -18.29L147.1 -15.19L121.1 -15.19Q121.25 -11.52 123.84 -9.22Q126.43 -6.91 130.18 -6.91Q133.99 -6.91 135.79 -8.57Q137.59 -10.22 138.53 -12.24L145.94 -8.35Q144.94 -6.48 143.03 -4.28Q141.12 -2.09 137.95 -0.54Q134.78 1.01 129.89 1.01ZM121.18 -21.96L137.88 -21.96Q137.59 -25.06 135.4 -26.93Q133.2 -28.8 129.67 -28.8Q126 -28.8 123.84 -26.93Q121.68 -25.06 121.18 -21.96Z M155.16 0L155.16 -50.4L164.23 -50.4L164.23 0Z M174.31 0L174.31 -35.71L183.38 -35.71L183.38 0ZM178.85 -39.89Q176.4 -39.89 174.71 -41.47Q173.02 -43.06 173.02 -45.65Q173.02 -48.24 174.71 -49.82Q176.4 -51.41 178.85 -51.41Q181.37 -51.41 183.02 -49.82Q184.68 -48.24 184.68 -45.65Q184.68 -43.06 183.02 -41.47Q181.37 -39.89 178.85 -39.89Z M193.46 0L193.46 -35.71L202.39 -35.71L202.39 -31.03L203.69 -31.03Q204.55 -32.9 206.93 -34.6Q209.3 -36.29 214.13 -36.29Q218.3 -36.29 221.44 -34.38Q224.57 -32.47 226.3 -29.12Q228.02 -25.78 228.02 -21.31L228.02 0L218.95 0L218.95 -20.59Q218.95 -24.62 216.97 -26.64Q214.99 -28.66 211.32 -28.66Q207.14 -28.66 204.84 -25.88Q202.54 -23.11 202.54 -18.14L202.54 0Z M254.09 1.01Q248.76 1.01 244.69 -1.26Q240.62 -3.53 238.36 -7.67Q236.09 -11.81 236.09 -17.42L236.09 -18.29Q236.09 -23.9 238.32 -28.04Q240.55 -32.18 244.58 -34.45Q248.62 -36.72 253.94 -36.72Q259.2 -36.72 263.09 -34.38Q266.98 -32.04 269.14 -27.9Q271.3 -23.76 271.3 -18.29L271.3 -15.19L245.3 -15.19Q245.45 -11.52 248.04 -9.22Q250.63 -6.91 254.38 -6.91Q258.19 -6.91 259.99 -8.57Q261.79 -10.22 262.73 -12.24L270.14 -8.35Q269.14 -6.48 267.23 -4.28Q265.32 -2.09 262.15 -0.54Q258.98 1.01 254.09 1.01ZM245.38 -21.96L262.08 -21.96Q261.79 -25.06 259.6 -26.93Q257.4 -28.8 253.87 -28.8Q250.2 -28.8 248.04 -26.93Q245.88 -25.06 245.38 -21.96Z M310.75 0L310.75 -44.93L294.55 -44.93L294.55 -50.4L333 -50.4L333 -44.93L316.8 -44.93L316.8 0Z M349.85 1.01Q344.52 1.01 340.49 -1.26Q336.46 -3.53 334.22 -7.63Q331.99 -11.74 331.99 -17.14L331.99 -18Q331.99 -23.47 334.22 -27.58Q336.46 -31.68 340.42 -33.95Q344.38 -36.22 349.49 -36.22Q354.46 -36.22 358.27 -34.09Q362.09 -31.97 364.25 -28.01Q366.41 -24.05 366.41 -18.72L366.41 -16.13L337.68 -16.13Q337.9 -10.44 341.35 -7.24Q344.81 -4.03 349.99 -4.03Q354.53 -4.03 356.98 -6.12Q359.42 -8.21 360.72 -11.09L365.62 -8.71Q364.54 -6.48 362.63 -4.25Q360.72 -2.02 357.66 -0.5Q354.6 1.01 349.85 1.01ZM337.75 -20.81L360.65 -20.81Q360.36 -25.7 357.3 -28.44Q354.24 -31.18 349.49 -31.18Q344.66 -31.18 341.57 -28.44Q338.47 -25.7 337.75 -20.81Z M387.14 1.01Q383.47 1.01 380.45 -0.29Q377.42 -1.58 375.7 -4.03Q373.97 -6.48 373.97 -10.01Q373.97 -13.61 375.7 -15.95Q377.42 -18.29 380.45 -19.48Q383.47 -20.66 387.22 -20.66L399.1 -20.66L399.1 -23.26Q399.1 -27 396.9 -29.16Q394.7 -31.32 390.38 -31.32Q386.14 -31.32 383.76 -29.27Q381.38 -27.22 380.52 -23.76L375.19 -25.49Q376.06 -28.44 377.93 -30.85Q379.8 -33.26 382.93 -34.74Q386.06 -36.22 390.46 -36.22Q397.22 -36.22 400.97 -32.72Q404.71 -29.23 404.71 -22.9L404.71 -6.98Q404.71 -4.82 406.73 -4.82L409.97 -4.82L409.97 0L405 0Q402.62 0 401.18 -1.33Q399.74 -2.66 399.74 -4.9L399.74 -5.26L398.88 -5.26Q398.09 -3.89 396.76 -2.41Q395.42 -0.94 393.12 0.04Q390.82 1.01 387.14 1.01ZM387.79 -3.89Q392.83 -3.89 395.96 -6.88Q399.1 -9.86 399.1 -15.26L399.1 -16.06L387.43 -16.06Q384.05 -16.06 381.85 -14.58Q379.66 -13.1 379.66 -10.15Q379.66 -7.2 381.92 -5.54Q384.19 -3.89 387.79 -3.89Z M417.74 0L417.74 -35.21L423.29 -35.21L423.29 -30.82L424.3 -30.82Q425.3 -32.69 427.61 -34.27Q429.91 -35.86 434.09 -35.86Q438.19 -35.86 440.75 -34.06Q443.3 -32.26 444.46 -29.66L445.46 -29.66Q446.69 -32.26 449.17 -34.06Q451.66 -35.86 456.12 -35.86Q459.65 -35.86 462.31 -34.42Q464.98 -32.98 466.52 -30.28Q468.07 -27.58 468.07 -23.83L468.07 0L462.38 0L462.38 -23.33Q462.38 -26.86 460.33 -28.91Q458.28 -30.96 454.61 -30.96Q450.72 -30.96 448.24 -28.44Q445.75 -25.92 445.75 -21.17L445.75 0L440.06 0L440.06 -23.33Q440.06 -26.86 438.01 -28.91Q435.96 -30.96 432.29 -30.96Q428.4 -30.96 425.92 -28.44Q423.43 -25.92 423.43 -21.17L423.43 0Z" fill="#0D1117"/></g></g></svg>
+</span>
+      <span class="mark dark"><svg xmlns="http://www.w3.org/2000/svg" width="603.69" height="100" viewBox="0 0 603.69 100" fill="none"><style>
+    @keyframes lk_wm{0%{opacity:0;transform:translate(10px,0)}56%{opacity:0;transform:translate(10px,0)}66%{opacity:1;transform:translate(0,0)}88.5%{opacity:1;transform:translate(0,0)}96.5%{opacity:0;transform:translate(0,0)}100%{opacity:0}}
+    .lk_wm{animation:lk_wm 3000ms linear infinite;transform-box:fill-box}
+    @media (prefers-reduced-motion:reduce){.lk_wm{animation:none;opacity:1;transform:none}}
+  </style><svg x="-6.02" y="-6.02" width="112.04" height="112.04" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+<!-- Pipeline Team animated mark v2. From loop completion onward, the frame is
+     the raw original artwork paths - no composite layers at the junction. -->
+<style>
+@keyframes pt_draw{0.00%{stroke-dashoffset:2880.6px}1.00%{stroke-dashoffset:2873.0px}2.00%{stroke-dashoffset:2865.3px}3.00%{stroke-dashoffset:2857.7px}4.00%{stroke-dashoffset:2850.0px}5.00%{stroke-dashoffset:2842.2px}6.00%{stroke-dashoffset:2834.2px}7.00%{stroke-dashoffset:2826.0px}8.00%{stroke-dashoffset:2817.2px}9.00%{stroke-dashoffset:2807.7px}10.00%{stroke-dashoffset:2797.2px}11.00%{stroke-dashoffset:2785.3px}12.00%{stroke-dashoffset:2771.5px}13.00%{stroke-dashoffset:2755.2px}14.00%{stroke-dashoffset:2735.8px}15.00%{stroke-dashoffset:2712.6px}16.00%{stroke-dashoffset:2684.6px}17.00%{stroke-dashoffset:2650.8px}18.00%{stroke-dashoffset:2610.1px}19.00%{stroke-dashoffset:2561.2px}20.00%{stroke-dashoffset:2502.6px}21.00%{stroke-dashoffset:2432.8px}22.00%{stroke-dashoffset:2349.8px}23.00%{stroke-dashoffset:2251.9px}24.00%{stroke-dashoffset:2136.8px}25.00%{stroke-dashoffset:2002.3px}26.00%{stroke-dashoffset:1845.7px}27.00%{stroke-dashoffset:1664.4px}28.00%{stroke-dashoffset:1455.3px}29.00%{stroke-dashoffset:1246.2px}30.00%{stroke-dashoffset:1064.9px}31.00%{stroke-dashoffset:908.3px}32.00%{stroke-dashoffset:773.8px}33.00%{stroke-dashoffset:658.7px}34.00%{stroke-dashoffset:560.8px}35.00%{stroke-dashoffset:477.8px}36.00%{stroke-dashoffset:408.0px}37.00%{stroke-dashoffset:349.4px}38.00%{stroke-dashoffset:300.5px}39.00%{stroke-dashoffset:259.8px}40.00%{stroke-dashoffset:226.0px}41.00%{stroke-dashoffset:198.0px}42.00%{stroke-dashoffset:174.8px}43.00%{stroke-dashoffset:155.4px}44.00%{stroke-dashoffset:139.1px}45.00%{stroke-dashoffset:125.3px}46.00%{stroke-dashoffset:113.4px}47.00%{stroke-dashoffset:102.9px}48.00%{stroke-dashoffset:93.4px}49.00%{stroke-dashoffset:84.6px}50.00%{stroke-dashoffset:76.4px}51.00%{stroke-dashoffset:68.4px}52.00%{stroke-dashoffset:60.6px}53.00%{stroke-dashoffset:52.9px}54.00%{stroke-dashoffset:45.3px}55.00%{stroke-dashoffset:37.6px}56.00%{stroke-dashoffset:30.0px}56.00%{stroke-dashoffset:0px}100%{stroke-dashoffset:0px}}
+@keyframes pt_travel{0.00%{offset-distance:0.000%}1.00%{offset-distance:0.000%}2.00%{offset-distance:0.220%}3.00%{offset-distance:0.488%}4.00%{offset-distance:0.758%}5.00%{offset-distance:1.031%}6.00%{offset-distance:1.311%}7.00%{offset-distance:1.601%}8.00%{offset-distance:1.908%}9.00%{offset-distance:2.241%}10.00%{offset-distance:2.610%}11.00%{offset-distance:3.028%}12.00%{offset-distance:3.513%}13.00%{offset-distance:4.083%}14.00%{offset-distance:4.762%}15.00%{offset-distance:5.577%}16.00%{offset-distance:6.559%}17.00%{offset-distance:7.744%}18.00%{offset-distance:9.172%}19.00%{offset-distance:10.888%}20.00%{offset-distance:12.944%}21.00%{offset-distance:15.395%}22.00%{offset-distance:18.304%}23.00%{offset-distance:21.739%}24.00%{offset-distance:25.776%}25.00%{offset-distance:30.496%}26.00%{offset-distance:35.989%}27.00%{offset-distance:42.350%}28.00%{offset-distance:49.684%}29.00%{offset-distance:57.018%}30.00%{offset-distance:63.380%}31.00%{offset-distance:68.872%}32.00%{offset-distance:73.592%}33.00%{offset-distance:77.629%}34.00%{offset-distance:81.065%}35.00%{offset-distance:83.974%}36.00%{offset-distance:86.425%}37.00%{offset-distance:88.480%}38.00%{offset-distance:90.197%}39.00%{offset-distance:91.624%}40.00%{offset-distance:92.809%}41.00%{offset-distance:93.791%}42.00%{offset-distance:94.606%}43.00%{offset-distance:95.285%}44.00%{offset-distance:95.856%}45.00%{offset-distance:96.340%}46.00%{offset-distance:96.759%}47.00%{offset-distance:97.128%}48.00%{offset-distance:97.461%}49.00%{offset-distance:97.768%}50.00%{offset-distance:98.058%}51.00%{offset-distance:98.337%}52.00%{offset-distance:98.610%}53.00%{offset-distance:98.880%}54.00%{offset-distance:98.965%}55.00%{offset-distance:98.965%}56.00%{offset-distance:98.965%}56.00%{offset-distance:98.965%}100%{offset-distance:98.965%}}
+@keyframes pt_pop{0.00%{transform:scale(0.200)}1.00%{transform:scale(0.770)}2.00%{transform:scale(1.101)}3.00%{transform:scale(1.147)}5.00%{transform:scale(1.000)}6.50%{transform:scale(1.000)}100%{transform:scale(1)}}
+@keyframes pt_pop2{0.00%{transform:scale(0.200)}1.00%{transform:scale(0.770)}2.00%{transform:scale(1.101)}3.00%{transform:scale(1.147)}5.00%{transform:scale(1.000)}6.50%{transform:scale(1.000)}53.00%{transform:scale(1)}58.00%{transform:scale(0)}100%{transform:scale(0)}}
+@keyframes pt_wedge{0.00%{opacity:1}53.00%{opacity:1}55.00%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_settle{0%{transform:scale(1)}56.00%{transform:scale(1)}58.00%{transform:scale(1.0112)}60.00%{transform:scale(1.0168)}62.00%{transform:scale(1.0167)}64.00%{transform:scale(1.0125)}66.00%{transform:scale(1.0067)}68.00%{transform:scale(1.0019)}70.00%{transform:scale(1.0000)}100%{transform:scale(1)}}
+@keyframes pt_final{0.00%{opacity:0}55.80%{opacity:0}56.00%{opacity:1}100.00%{opacity:1}}
+@keyframes pt_reveal{0.00%{opacity:1}55.80%{opacity:1}56.00%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_cycle{0.00%{opacity:1}88.50%{opacity:1}90.50%{opacity:0.85}92.50%{opacity:0.5}94.50%{opacity:0.15}96.50%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_chevA{0.00%{opacity:1}26.23%{opacity:1}26.43%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_chevS{0.00%{opacity:0}26.23%{opacity:0}26.43%{opacity:1}32.72%{opacity:1}32.92%{opacity:0}34.43%{opacity:0}34.63%{opacity:1}50.39%{opacity:1}50.59%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_chevU{0.00%{opacity:0}32.72%{opacity:0}32.92%{opacity:1}34.43%{opacity:1}34.63%{opacity:0}100.00%{opacity:0}}
+@keyframes pt_solid{0.00%{opacity:0}50.39%{opacity:0}50.59%{opacity:1}55.80%{opacity:1}56.00%{opacity:0}100.00%{opacity:0}}
+.pt *{animation-duration:3s;animation-iteration-count:infinite;animation-timing-function:linear;}
+.dl{animation-name:pt_draw;}
+.rev{animation-name:pt_reveal;}
+.fin{animation-name:pt_final,pt_settle;transform-origin:512px 512px;transform-box:view-box;}
+.cyc{animation-name:pt_cycle;}
+.ar{offset-path:path('M313 914.5H255A145 145 0 0 1 110 769V657A145 145 0 0 1 255 512H769A145 145 0 0 0 914 367V255A145 145 0 0 0 769 110H657A145 145 0 0 0 512 255V769A145 145 0 0 1 367 914.5H305');offset-rotate:auto;animation-name:pt_travel;}
+.pp{animation-name:pt_pop;transform-box:view-box;transform-origin:0px 0px;}
+.pp2{animation-name:pt_pop2;transform-box:view-box;transform-origin:0px 0px;}
+.wedge{animation-name:pt_wedge;}
+.cA{animation-name:pt_chevA;}
+.cS{animation-name:pt_chevS;}
+.cU{animation-name:pt_chevU;}
+.sS{animation-name:pt_solid;}
+
+@media (prefers-reduced-motion: reduce){
+ .pt *{animation:none !important;}
+ .fin{opacity:1 !important;}
+ .rev,.cA,.cS,.cU,.sS{opacity:0 !important;}
+}
+</style>
+<g class="pt">
+<g class="cyc">
+<g class="ar"><g class="cU" style="opacity:0"><g class="pp"><path d="M0 -55 L32 0 L0 55 L9 0 Z" fill="#4493F8"/></g></g></g>
+<mask id="ptrv"><rect width="1024" height="1024" fill="black"/>
+<path class="dl" d="M313 914.5H255A145 145 0 0 1 110 769V657A145 145 0 0 1 255 512H769A145 145 0 0 0 914 367V255A145 145 0 0 0 769 110H657A145 145 0 0 0 512 255V769A145 145 0 0 1 367 914.5H305" fill="none" stroke="white" stroke-width="134"
+ stroke-dasharray="2880.6 2880.6" stroke-dashoffset="2880.6"/>
+<g class="ar"><g class="pp"><path d="M-20 -55 L32 0 L-20 55 Z" fill="white" stroke="white" stroke-width="10"/></g></g>
+<path class="wedge" d="M336.5 973L297 914.5L336.5 855Z" fill="black"/></mask>
+<g class="rev" mask="url(#ptrv)"><path d="M567 769C567 879.457 477.457 969 367 969H334.016L302.548 914.497L334.589 859H367C416.706 859 457 818.706 457 769V587H567V769Z" fill="#4493F8"/><path d="M769 55C879.457 55 969 144.543 969 255V367C969 477.457 879.457 567 769 567H712.111L743.549 512.551L711.477 457H769C818.706 457 859 416.706 859 367V255C859 205.294 818.706 165 769 165H657C607.294 165 567 205.294 567 255V437H457V255C457 144.543 546.543 55 657 55H769Z" fill="#4493F8"/><path d="M688.383 457L720.454 512.551L689.018 567H255C205.294 567 165 607.294 165 657V769C165 818.706 205.294 859 255 859H311.494L279.453 914.498L310.921 969H255C144.543 969 55 879.457 55 769V657C55 546.543 144.543 457 255 457H688.383Z" fill="#F0F6FC"/></g>
+<g class="ar"><g class="pp2">
+<g class="cA"><path d="M0 -55 L32 0 L0 55 L9 0 Z" fill="#F0F6FC"/></g>
+<g class="cS" style="opacity:0"><path d="M0 -55 L32 0 L0 55 L9 0 Z" fill="#4493F8"/></g>
+<g class="sS" style="opacity:0"><path d="M-20 -55 L0 -55 L32 0 L0 55 L-20 55 Z" fill="#4493F8"/></g>
+</g></g>
+<g class="fin"><path d="M567 769C567 879.457 477.457 969 367 969H334.016L302.548 914.497L334.589 859H367C416.706 859 457 818.706 457 769V587H567V769Z" fill="#4493F8"/><path d="M769 55C879.457 55 969 144.543 969 255V367C969 477.457 879.457 567 769 567H712.111L743.549 512.551L711.477 457H769C818.706 457 859 416.706 859 367V255C859 205.294 818.706 165 769 165H657C607.294 165 567 205.294 567 255V437H457V255C457 144.543 546.543 55 657 55H769Z" fill="#4493F8"/><path d="M688.383 457L720.454 512.551L689.018 567H255C205.294 567 165 607.294 165 657V769C165 818.706 205.294 859 255 859H311.494L279.453 914.498L310.921 969H255C144.543 969 55 879.457 55 769V657C55 546.543 144.543 457 255 457H688.383Z" fill="#F0F6FC"/></g>
+</g>
+</g>
+</svg>
+<g transform="translate(130 75.2)"><g class="lk_wm"><path d="M4.75 0L4.75 -50.4L25.49 -50.4Q30.24 -50.4 33.88 -48.49Q37.51 -46.58 39.56 -43.13Q41.62 -39.67 41.62 -34.92L41.62 -33.91Q41.62 -29.23 39.49 -25.74Q37.37 -22.25 33.73 -20.34Q30.1 -18.43 25.49 -18.43L14.26 -18.43L14.26 0ZM14.26 -27.07L24.55 -27.07Q27.94 -27.07 30.02 -28.94Q32.11 -30.82 32.11 -34.06L32.11 -34.78Q32.11 -38.02 30.02 -39.89Q27.94 -41.76 24.55 -41.76L14.26 -41.76Z M48.53 0L48.53 -35.71L57.6 -35.71L57.6 0ZM53.06 -39.89Q50.62 -39.89 48.92 -41.47Q47.23 -43.06 47.23 -45.65Q47.23 -48.24 48.92 -49.82Q50.62 -51.41 53.06 -51.41Q55.58 -51.41 57.24 -49.82Q58.9 -48.24 58.9 -45.65Q58.9 -43.06 57.24 -41.47Q55.58 -39.89 53.06 -39.89Z M67.68 14.4L67.68 -35.71L76.61 -35.71L76.61 -31.39L77.9 -31.39Q79.13 -33.48 81.72 -35.1Q84.31 -36.72 89.14 -36.72Q93.46 -36.72 97.13 -34.6Q100.8 -32.47 103.03 -28.37Q105.26 -24.26 105.26 -18.43L105.26 -17.28Q105.26 -11.45 103.03 -7.34Q100.8 -3.24 97.13 -1.12Q93.46 1.01 89.14 1.01Q85.9 1.01 83.7 0.25Q81.5 -0.5 80.17 -1.69Q78.84 -2.88 78.05 -4.1L76.75 -4.1L76.75 14.4ZM86.4 -6.91Q90.65 -6.91 93.42 -9.61Q96.19 -12.31 96.19 -17.5L96.19 -18.22Q96.19 -23.4 93.38 -26.1Q90.58 -28.8 86.4 -28.8Q82.22 -28.8 79.42 -26.1Q76.61 -23.4 76.61 -18.22L76.61 -17.5Q76.61 -12.31 79.42 -9.61Q82.22 -6.91 86.4 -6.91Z M129.89 1.01Q124.56 1.01 120.49 -1.26Q116.42 -3.53 114.16 -7.67Q111.89 -11.81 111.89 -17.42L111.89 -18.29Q111.89 -23.9 114.12 -28.04Q116.35 -32.18 120.38 -34.45Q124.42 -36.72 129.74 -36.72Q135 -36.72 138.89 -34.38Q142.78 -32.04 144.94 -27.9Q147.1 -23.76 147.1 -18.29L147.1 -15.19L121.1 -15.19Q121.25 -11.52 123.84 -9.22Q126.43 -6.91 130.18 -6.91Q133.99 -6.91 135.79 -8.57Q137.59 -10.22 138.53 -12.24L145.94 -8.35Q144.94 -6.48 143.03 -4.28Q141.12 -2.09 137.95 -0.54Q134.78 1.01 129.89 1.01ZM121.18 -21.96L137.88 -21.96Q137.59 -25.06 135.4 -26.93Q133.2 -28.8 129.67 -28.8Q126 -28.8 123.84 -26.93Q121.68 -25.06 121.18 -21.96Z M155.16 0L155.16 -50.4L164.23 -50.4L164.23 0Z M174.31 0L174.31 -35.71L183.38 -35.71L183.38 0ZM178.85 -39.89Q176.4 -39.89 174.71 -41.47Q173.02 -43.06 173.02 -45.65Q173.02 -48.24 174.71 -49.82Q176.4 -51.41 178.85 -51.41Q181.37 -51.41 183.02 -49.82Q184.68 -48.24 184.68 -45.65Q184.68 -43.06 183.02 -41.47Q181.37 -39.89 178.85 -39.89Z M193.46 0L193.46 -35.71L202.39 -35.71L202.39 -31.03L203.69 -31.03Q204.55 -32.9 206.93 -34.6Q209.3 -36.29 214.13 -36.29Q218.3 -36.29 221.44 -34.38Q224.57 -32.47 226.3 -29.12Q228.02 -25.78 228.02 -21.31L228.02 0L218.95 0L218.95 -20.59Q218.95 -24.62 216.97 -26.64Q214.99 -28.66 211.32 -28.66Q207.14 -28.66 204.84 -25.88Q202.54 -23.11 202.54 -18.14L202.54 0Z M254.09 1.01Q248.76 1.01 244.69 -1.26Q240.62 -3.53 238.36 -7.67Q236.09 -11.81 236.09 -17.42L236.09 -18.29Q236.09 -23.9 238.32 -28.04Q240.55 -32.18 244.58 -34.45Q248.62 -36.72 253.94 -36.72Q259.2 -36.72 263.09 -34.38Q266.98 -32.04 269.14 -27.9Q271.3 -23.76 271.3 -18.29L271.3 -15.19L245.3 -15.19Q245.45 -11.52 248.04 -9.22Q250.63 -6.91 254.38 -6.91Q258.19 -6.91 259.99 -8.57Q261.79 -10.22 262.73 -12.24L270.14 -8.35Q269.14 -6.48 267.23 -4.28Q265.32 -2.09 262.15 -0.54Q258.98 1.01 254.09 1.01ZM245.38 -21.96L262.08 -21.96Q261.79 -25.06 259.6 -26.93Q257.4 -28.8 253.87 -28.8Q250.2 -28.8 248.04 -26.93Q245.88 -25.06 245.38 -21.96Z M310.75 0L310.75 -44.93L294.55 -44.93L294.55 -50.4L333 -50.4L333 -44.93L316.8 -44.93L316.8 0Z M349.85 1.01Q344.52 1.01 340.49 -1.26Q336.46 -3.53 334.22 -7.63Q331.99 -11.74 331.99 -17.14L331.99 -18Q331.99 -23.47 334.22 -27.58Q336.46 -31.68 340.42 -33.95Q344.38 -36.22 349.49 -36.22Q354.46 -36.22 358.27 -34.09Q362.09 -31.97 364.25 -28.01Q366.41 -24.05 366.41 -18.72L366.41 -16.13L337.68 -16.13Q337.9 -10.44 341.35 -7.24Q344.81 -4.03 349.99 -4.03Q354.53 -4.03 356.98 -6.12Q359.42 -8.21 360.72 -11.09L365.62 -8.71Q364.54 -6.48 362.63 -4.25Q360.72 -2.02 357.66 -0.5Q354.6 1.01 349.85 1.01ZM337.75 -20.81L360.65 -20.81Q360.36 -25.7 357.3 -28.44Q354.24 -31.18 349.49 -31.18Q344.66 -31.18 341.57 -28.44Q338.47 -25.7 337.75 -20.81Z M387.14 1.01Q383.47 1.01 380.45 -0.29Q377.42 -1.58 375.7 -4.03Q373.97 -6.48 373.97 -10.01Q373.97 -13.61 375.7 -15.95Q377.42 -18.29 380.45 -19.48Q383.47 -20.66 387.22 -20.66L399.1 -20.66L399.1 -23.26Q399.1 -27 396.9 -29.16Q394.7 -31.32 390.38 -31.32Q386.14 -31.32 383.76 -29.27Q381.38 -27.22 380.52 -23.76L375.19 -25.49Q376.06 -28.44 377.93 -30.85Q379.8 -33.26 382.93 -34.74Q386.06 -36.22 390.46 -36.22Q397.22 -36.22 400.97 -32.72Q404.71 -29.23 404.71 -22.9L404.71 -6.98Q404.71 -4.82 406.73 -4.82L409.97 -4.82L409.97 0L405 0Q402.62 0 401.18 -1.33Q399.74 -2.66 399.74 -4.9L399.74 -5.26L398.88 -5.26Q398.09 -3.89 396.76 -2.41Q395.42 -0.94 393.12 0.04Q390.82 1.01 387.14 1.01ZM387.79 -3.89Q392.83 -3.89 395.96 -6.88Q399.1 -9.86 399.1 -15.26L399.1 -16.06L387.43 -16.06Q384.05 -16.06 381.85 -14.58Q379.66 -13.1 379.66 -10.15Q379.66 -7.2 381.92 -5.54Q384.19 -3.89 387.79 -3.89Z M417.74 0L417.74 -35.21L423.29 -35.21L423.29 -30.82L424.3 -30.82Q425.3 -32.69 427.61 -34.27Q429.91 -35.86 434.09 -35.86Q438.19 -35.86 440.75 -34.06Q443.3 -32.26 444.46 -29.66L445.46 -29.66Q446.69 -32.26 449.17 -34.06Q451.66 -35.86 456.12 -35.86Q459.65 -35.86 462.31 -34.42Q464.98 -32.98 466.52 -30.28Q468.07 -27.58 468.07 -23.83L468.07 0L462.38 0L462.38 -23.33Q462.38 -26.86 460.33 -28.91Q458.28 -30.96 454.61 -30.96Q450.72 -30.96 448.24 -28.44Q445.75 -25.92 445.75 -21.17L445.75 0L440.06 0L440.06 -23.33Q440.06 -26.86 438.01 -28.91Q435.96 -30.96 432.29 -30.96Q428.4 -30.96 425.92 -28.44Q423.43 -25.92 423.43 -21.17L423.43 0Z" fill="#F0F6FC"/></g></g></svg>
+</span>
+      <h1>Pipeline Team — Brand Kit</h1>
+      <p class="tagline">Every logo, lockup, application, and token — ready to download.</p>
+      <div class="stats">
+        <a class="cta" href="brandkit-all.zip" download>↓ Download everything</a>
+        <span class="stat">52 assets</span>
+        <span class="stat">166 files</span>
+        <span class="stat">12 formats</span>
+        
+      </div>
+    </div>
+  </header>
+
+  <nav class="toolbar">
+    <div class="toolbar-in">
+      <input id="q" class="search" type="search" placeholder="Filter assets by name…" aria-label="Filter assets">
+      <div class="navlinks">
+        <a href="#sec-logo">Logo &amp; marks</a><a href="#sec-lockups">Lockups</a><a href="#sec-motion">Motion</a><a href="#sec-apps">Applications</a><a href="#sec-stickers">Stickers</a><a href="#sec-tokens">Tokens</a><a href="#sec-docs">Docs &amp; guidelines</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <section class="sec" id="sec-logo">
+    <div class="sec-head">
+      <div>
+        <h2>Logo &amp; marks <span class="count">7</span></h2>
+        <p class="blurb">Recoloured mark variants and the wordmark — the core identity.</p>
+      </div>
+      <a class="zip" href="logo.zip" download>Download logo.zip</a>
+    </div>
+    <div class="grid"><figure class="card" data-name="mark · mono (currentcolor) logo/mark-mono">
+      <div class="tile"><img loading="lazy" src="logo/mark-mono.svg" alt="Mark · mono (currentColor)"></div>
+      <figcaption>Mark · mono (currentColor)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-mono.svg" download title="logo/mark-mono.svg">SVG</a></div>
+    </figure><figure class="card" data-name="mark · duotone · light logo/mark-duotone-light">
+      <div class="tile"><img loading="lazy" src="logo/mark-duotone-light.svg" alt="Mark · duotone · light"></div>
+      <figcaption>Mark · duotone · light</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-duotone-light.svg" download title="logo/mark-duotone-light.svg">SVG</a><a class="dl" href="logo/mark-duotone-light.png" download title="logo/mark-duotone-light.png">PNG</a><a class="dl" href="logo/mark-duotone-light@2x.png" download title="logo/mark-duotone-light@2x.png">PNG @2x</a><a class="dl" href="logo/mark-duotone-light.pdf" download title="logo/mark-duotone-light.pdf">PDF</a></div>
+    </figure><figure class="card" data-name="mark · duotone · dark logo/mark-duotone-dark">
+      <div class="tile"><img loading="lazy" src="logo/mark-duotone-dark.svg" alt="Mark · duotone · dark"></div>
+      <figcaption>Mark · duotone · dark</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-duotone-dark.svg" download title="logo/mark-duotone-dark.svg">SVG</a><a class="dl" href="logo/mark-duotone-dark.png" download title="logo/mark-duotone-dark.png">PNG</a><a class="dl" href="logo/mark-duotone-dark@2x.png" download title="logo/mark-duotone-dark@2x.png">PNG @2x</a></div>
+    </figure><figure class="card" data-name="mark · white knockout (on accent) logo/mark-on-accent">
+      <div class="tile dark"><img loading="lazy" src="logo/mark-on-accent.svg" alt="Mark · white knockout (on accent)"></div>
+      <figcaption>Mark · white knockout (on accent)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-on-accent.svg" download title="logo/mark-on-accent.svg">SVG</a><a class="dl" href="logo/mark-on-accent.png" download title="logo/mark-on-accent.png">PNG</a><a class="dl" href="logo/mark-on-accent@2x.png" download title="logo/mark-on-accent@2x.png">PNG @2x</a></div>
+    </figure><figure class="card" data-name="original logo (as supplied) logo/logo-original">
+      <div class="tile"><img loading="lazy" src="logo/logo-original.svg" alt="Original logo (as supplied)"></div>
+      <figcaption>Original logo (as supplied)</figcaption>
+      <div class="dls"><a class="dl" href="logo/logo-original.svg" download title="logo/logo-original.svg">SVG</a></div>
+    </figure><figure class="card" data-name="wordmark · light logo/wordmark-light">
+      <div class="tile"><img loading="lazy" src="logo/wordmark-light.svg" alt="Wordmark · light"></div>
+      <figcaption>Wordmark · light</figcaption>
+      <div class="dls"><a class="dl" href="logo/wordmark-light.svg" download title="logo/wordmark-light.svg">SVG</a><a class="dl" href="logo/wordmark-light.png" download title="logo/wordmark-light.png">PNG</a><a class="dl" href="logo/wordmark-light@2x.png" download title="logo/wordmark-light@2x.png">PNG @2x</a><a class="dl" href="logo/wordmark-light.pdf" download title="logo/wordmark-light.pdf">PDF</a></div>
+    </figure><figure class="card" data-name="wordmark · dark logo/wordmark-dark">
+      <div class="tile"><img loading="lazy" src="logo/wordmark-dark.svg" alt="Wordmark · dark"></div>
+      <figcaption>Wordmark · dark</figcaption>
+      <div class="dls"><a class="dl" href="logo/wordmark-dark.svg" download title="logo/wordmark-dark.svg">SVG</a><a class="dl" href="logo/wordmark-dark.png" download title="logo/wordmark-dark.png">PNG</a><a class="dl" href="logo/wordmark-dark@2x.png" download title="logo/wordmark-dark@2x.png">PNG @2x</a></div>
+    </figure></div>
+  </section>
+<section class="sec" id="sec-lockups">
+    <div class="sec-head">
+      <div>
+        <h2>Lockups <span class="count">9</span></h2>
+        <p class="blurb">Cap-height-aligned mark + wordmark combinations, plus clear-space diagram.</p>
+      </div>
+      <a class="zip" href="logo.zip" download>Download logo.zip</a>
+    </div>
+    <div class="grid"><figure class="card" data-name="horizontal lockup · light logo/lockup-horizontal-light">
+      <div class="tile"><img loading="lazy" src="logo/lockup-horizontal-light.svg" alt="Horizontal lockup · light"></div>
+      <figcaption>Horizontal lockup · light</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-horizontal-light.svg" download title="logo/lockup-horizontal-light.svg">SVG</a><a class="dl" href="logo/lockup-horizontal-light.png" download title="logo/lockup-horizontal-light.png">PNG</a><a class="dl" href="logo/lockup-horizontal-light@2x.png" download title="logo/lockup-horizontal-light@2x.png">PNG @2x</a><a class="dl" href="logo/lockup-horizontal-light.pdf" download title="logo/lockup-horizontal-light.pdf">PDF</a></div>
+    </figure><figure class="card" data-name="horizontal lockup · dark logo/lockup-horizontal-dark">
+      <div class="tile"><img loading="lazy" src="logo/lockup-horizontal-dark.svg" alt="Horizontal lockup · dark"></div>
+      <figcaption>Horizontal lockup · dark</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-horizontal-dark.svg" download title="logo/lockup-horizontal-dark.svg">SVG</a><a class="dl" href="logo/lockup-horizontal-dark.png" download title="logo/lockup-horizontal-dark.png">PNG</a><a class="dl" href="logo/lockup-horizontal-dark@2x.png" download title="logo/lockup-horizontal-dark@2x.png">PNG @2x</a><a class="dl" href="logo/lockup-horizontal-dark.pdf" download title="logo/lockup-horizontal-dark.pdf">PDF</a></div>
+    </figure><figure class="card" data-name="vertical lockup · light logo/lockup-vertical-light">
+      <div class="tile"><img loading="lazy" src="logo/lockup-vertical-light.svg" alt="Vertical lockup · light"></div>
+      <figcaption>Vertical lockup · light</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-vertical-light.svg" download title="logo/lockup-vertical-light.svg">SVG</a><a class="dl" href="logo/lockup-vertical-light.png" download title="logo/lockup-vertical-light.png">PNG</a><a class="dl" href="logo/lockup-vertical-light@2x.png" download title="logo/lockup-vertical-light@2x.png">PNG @2x</a></div>
+    </figure><figure class="card" data-name="vertical lockup · dark logo/lockup-vertical-dark">
+      <div class="tile"><img loading="lazy" src="logo/lockup-vertical-dark.svg" alt="Vertical lockup · dark"></div>
+      <figcaption>Vertical lockup · dark</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-vertical-dark.svg" download title="logo/lockup-vertical-dark.svg">SVG</a><a class="dl" href="logo/lockup-vertical-dark.png" download title="logo/lockup-vertical-dark.png">PNG</a><a class="dl" href="logo/lockup-vertical-dark@2x.png" download title="logo/lockup-vertical-dark@2x.png">PNG @2x</a></div>
+    </figure><figure class="card" data-name="horizontal lockup · mono black logo/lockup-horizontal-mono-black">
+      <div class="tile"><img loading="lazy" src="logo/lockup-horizontal-mono-black.svg" alt="Horizontal lockup · mono black"></div>
+      <figcaption>Horizontal lockup · mono black</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-horizontal-mono-black.svg" download title="logo/lockup-horizontal-mono-black.svg">SVG</a><a class="dl" href="logo/lockup-horizontal-mono-black.png" download title="logo/lockup-horizontal-mono-black.png">PNG</a><a class="dl" href="logo/lockup-horizontal-mono-black@2x.png" download title="logo/lockup-horizontal-mono-black@2x.png">PNG @2x</a></div>
+    </figure><figure class="card" data-name="horizontal lockup · mono white logo/lockup-horizontal-mono-white">
+      <div class="tile dark"><img loading="lazy" src="logo/lockup-horizontal-mono-white.svg" alt="Horizontal lockup · mono white"></div>
+      <figcaption>Horizontal lockup · mono white</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-horizontal-mono-white.svg" download title="logo/lockup-horizontal-mono-white.svg">SVG</a><a class="dl" href="logo/lockup-horizontal-mono-white.png" download title="logo/lockup-horizontal-mono-white.png">PNG</a><a class="dl" href="logo/lockup-horizontal-mono-white@2x.png" download title="logo/lockup-horizontal-mono-white@2x.png">PNG @2x</a></div>
+    </figure><figure class="card" data-name="horizontal lockup · light · clear-space padded logo/lockup-horizontal-light-clearspace">
+      <div class="tile"><img loading="lazy" src="logo/lockup-horizontal-light-clearspace.svg" alt="Horizontal lockup · light · clear-space padded"></div>
+      <figcaption>Horizontal lockup · light · clear-space padded</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-horizontal-light-clearspace.svg" download title="logo/lockup-horizontal-light-clearspace.svg">SVG</a></div>
+    </figure><figure class="card" data-name="horizontal lockup · dark · clear-space padded logo/lockup-horizontal-dark-clearspace">
+      <div class="tile"><img loading="lazy" src="logo/lockup-horizontal-dark-clearspace.svg" alt="Horizontal lockup · dark · clear-space padded"></div>
+      <figcaption>Horizontal lockup · dark · clear-space padded</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-horizontal-dark-clearspace.svg" download title="logo/lockup-horizontal-dark-clearspace.svg">SVG</a></div>
+    </figure><figure class="card" data-name="clear-space &amp; exclusion-zone diagram logo/clearspace-diagram">
+      <div class="tile"><img loading="lazy" src="logo/clearspace-diagram.svg" alt="Clear-space &amp; exclusion-zone diagram"></div>
+      <figcaption>Clear-space &amp; exclusion-zone diagram</figcaption>
+      <div class="dls"><a class="dl" href="logo/clearspace-diagram.svg" download title="logo/clearspace-diagram.svg">SVG</a><a class="dl" href="logo/clearspace-diagram.png" download title="logo/clearspace-diagram.png">PNG</a><a class="dl" href="logo/clearspace-diagram@2x.png" download title="logo/clearspace-diagram@2x.png">PNG @2x</a></div>
+    </figure></div>
+  </section>
+<section class="sec" id="sec-motion">
+    <div class="sec-head">
+      <div>
+        <h2>Motion <span class="count">15</span></h2>
+        <p class="blurb">Animated marks &amp; lockups — live SVG and Lottie, for launches and loaders.</p>
+      </div>
+      <a class="zip" href="logo.zip" download>Download logo.zip</a>
+    </div>
+    <div class="grid"><figure class="card" data-name="centerline mark · light (motion base) logo/mark-centerline-light">
+      <div class="tile"><img loading="lazy" src="logo/mark-centerline-light.svg" alt="Centerline mark · light (motion base)"></div>
+      <figcaption>Centerline mark · light (motion base)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-centerline-light.svg" download title="logo/mark-centerline-light.svg">SVG</a><a class="dl" href="logo/mark-centerline-light.png" download title="logo/mark-centerline-light.png">PNG</a><a class="dl" href="logo/mark-centerline-light@2x.png" download title="logo/mark-centerline-light@2x.png">PNG @2x</a></div>
+    </figure><figure class="card" data-name="centerline mark · dark (motion base) logo/mark-centerline-dark">
+      <div class="tile"><img loading="lazy" src="logo/mark-centerline-dark.svg" alt="Centerline mark · dark (motion base)"></div>
+      <figcaption>Centerline mark · dark (motion base)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-centerline-dark.svg" download title="logo/mark-centerline-dark.svg">SVG</a><a class="dl" href="logo/mark-centerline-dark.png" download title="logo/mark-centerline-dark.png">PNG</a><a class="dl" href="logo/mark-centerline-dark@2x.png" download title="logo/mark-centerline-dark@2x.png">PNG @2x</a></div>
+    </figure><figure class="card" data-name="centerline mark · mono (motion base) logo/mark-centerline-mono">
+      <div class="tile"><img loading="lazy" src="logo/mark-centerline-mono.svg" alt="Centerline mark · mono (motion base)"></div>
+      <figcaption>Centerline mark · mono (motion base)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-centerline-mono.svg" download title="logo/mark-centerline-mono.svg">SVG</a></div>
+    </figure><figure class="card" data-name="draw-on mark · light logo/mark-animated-light">
+      <div class="tile"><img loading="lazy" src="logo/mark-animated-light.svg" alt="Draw-on mark · light"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Draw-on mark · light</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-animated-light.svg" download title="logo/mark-animated-light.svg">SVG</a><a class="dl" href="logo/mark-animated-light.webp" download title="logo/mark-animated-light.webp">WebP</a><a class="dl" href="logo/mark-animated-light.json" download title="logo/mark-animated-light.json">Lottie</a><a class="dl" href="logo/mark-animated-light.gif" download title="logo/mark-animated-light.gif">GIF</a><a class="dl" href="logo/mark-animated-light.apng" download title="logo/mark-animated-light.apng">APNG</a></div>
+    </figure><figure class="card" data-name="draw-on mark · dark logo/mark-animated-dark">
+      <div class="tile"><img loading="lazy" src="logo/mark-animated-dark.svg" alt="Draw-on mark · dark"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Draw-on mark · dark</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-animated-dark.svg" download title="logo/mark-animated-dark.svg">SVG</a><a class="dl" href="logo/mark-animated-dark.webp" download title="logo/mark-animated-dark.webp">WebP</a><a class="dl" href="logo/mark-animated-dark.json" download title="logo/mark-animated-dark.json">Lottie</a><a class="dl" href="logo/mark-animated-dark.gif" download title="logo/mark-animated-dark.gif">GIF</a><a class="dl" href="logo/mark-animated-dark.apng" download title="logo/mark-animated-dark.apng">APNG</a></div>
+    </figure><figure class="card" data-name="animated horizontal lockup · light logo/lockup-horizontal-animated-light">
+      <div class="tile"><img loading="lazy" src="logo/lockup-horizontal-animated-light.svg" alt="Animated horizontal lockup · light"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Animated horizontal lockup · light</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-horizontal-animated-light.svg" download title="logo/lockup-horizontal-animated-light.svg">SVG</a><a class="dl" href="logo/lockup-horizontal-animated-light.webp" download title="logo/lockup-horizontal-animated-light.webp">WebP</a><a class="dl" href="logo/lockup-horizontal-animated-light.gif" download title="logo/lockup-horizontal-animated-light.gif">GIF</a><a class="dl" href="logo/lockup-horizontal-animated-light.apng" download title="logo/lockup-horizontal-animated-light.apng">APNG</a></div>
+    </figure><figure class="card" data-name="animated horizontal lockup · dark logo/lockup-horizontal-animated-dark">
+      <div class="tile"><img loading="lazy" src="logo/lockup-horizontal-animated-dark.svg" alt="Animated horizontal lockup · dark"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Animated horizontal lockup · dark</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-horizontal-animated-dark.svg" download title="logo/lockup-horizontal-animated-dark.svg">SVG</a><a class="dl" href="logo/lockup-horizontal-animated-dark.webp" download title="logo/lockup-horizontal-animated-dark.webp">WebP</a><a class="dl" href="logo/lockup-horizontal-animated-dark.gif" download title="logo/lockup-horizontal-animated-dark.gif">GIF</a><a class="dl" href="logo/lockup-horizontal-animated-dark.apng" download title="logo/lockup-horizontal-animated-dark.apng">APNG</a></div>
+    </figure><figure class="card" data-name="animated vertical lockup · light logo/lockup-vertical-animated-light">
+      <div class="tile"><img loading="lazy" src="logo/lockup-vertical-animated-light.svg" alt="Animated vertical lockup · light"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Animated vertical lockup · light</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-vertical-animated-light.svg" download title="logo/lockup-vertical-animated-light.svg">SVG</a><a class="dl" href="logo/lockup-vertical-animated-light.webp" download title="logo/lockup-vertical-animated-light.webp">WebP</a><a class="dl" href="logo/lockup-vertical-animated-light.gif" download title="logo/lockup-vertical-animated-light.gif">GIF</a><a class="dl" href="logo/lockup-vertical-animated-light.apng" download title="logo/lockup-vertical-animated-light.apng">APNG</a></div>
+    </figure><figure class="card" data-name="animated vertical lockup · dark logo/lockup-vertical-animated-dark">
+      <div class="tile"><img loading="lazy" src="logo/lockup-vertical-animated-dark.svg" alt="Animated vertical lockup · dark"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Animated vertical lockup · dark</figcaption>
+      <div class="dls"><a class="dl" href="logo/lockup-vertical-animated-dark.svg" download title="logo/lockup-vertical-animated-dark.svg">SVG</a><a class="dl" href="logo/lockup-vertical-animated-dark.webp" download title="logo/lockup-vertical-animated-dark.webp">WebP</a><a class="dl" href="logo/lockup-vertical-animated-dark.gif" download title="logo/lockup-vertical-animated-dark.gif">GIF</a><a class="dl" href="logo/lockup-vertical-animated-dark.apng" download title="logo/lockup-vertical-animated-dark.apng">APNG</a></div>
+    </figure><figure class="card" data-name="flow-dash mark · light (always running) logo/mark-flowdash-light">
+      <div class="tile"><img loading="lazy" src="logo/mark-flowdash-light.svg" alt="Flow-dash mark · light (always running)"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Flow-dash mark · light (always running)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-flowdash-light.svg" download title="logo/mark-flowdash-light.svg">SVG</a><a class="dl" href="logo/mark-flowdash-light.webp" download title="logo/mark-flowdash-light.webp">WebP</a><a class="dl" href="logo/mark-flowdash-light.json" download title="logo/mark-flowdash-light.json">Lottie</a><a class="dl" href="logo/mark-flowdash-light.gif" download title="logo/mark-flowdash-light.gif">GIF</a><a class="dl" href="logo/mark-flowdash-light.apng" download title="logo/mark-flowdash-light.apng">APNG</a></div>
+    </figure><figure class="card" data-name="flow-dash mark · dark (always running) logo/mark-flowdash-dark">
+      <div class="tile"><img loading="lazy" src="logo/mark-flowdash-dark.svg" alt="Flow-dash mark · dark (always running)"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Flow-dash mark · dark (always running)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-flowdash-dark.svg" download title="logo/mark-flowdash-dark.svg">SVG</a><a class="dl" href="logo/mark-flowdash-dark.webp" download title="logo/mark-flowdash-dark.webp">WebP</a><a class="dl" href="logo/mark-flowdash-dark.json" download title="logo/mark-flowdash-dark.json">Lottie</a><a class="dl" href="logo/mark-flowdash-dark.gif" download title="logo/mark-flowdash-dark.gif">GIF</a><a class="dl" href="logo/mark-flowdash-dark.apng" download title="logo/mark-flowdash-dark.apng">APNG</a></div>
+    </figure><figure class="card" data-name="pulse mark · light (breathe) logo/mark-pulse-light">
+      <div class="tile"><img loading="lazy" src="logo/mark-pulse-light.svg" alt="Pulse mark · light (breathe)"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Pulse mark · light (breathe)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-pulse-light.svg" download title="logo/mark-pulse-light.svg">SVG</a><a class="dl" href="logo/mark-pulse-light.webp" download title="logo/mark-pulse-light.webp">WebP</a><a class="dl" href="logo/mark-pulse-light.json" download title="logo/mark-pulse-light.json">Lottie</a><a class="dl" href="logo/mark-pulse-light.gif" download title="logo/mark-pulse-light.gif">GIF</a><a class="dl" href="logo/mark-pulse-light.apng" download title="logo/mark-pulse-light.apng">APNG</a></div>
+    </figure><figure class="card" data-name="pulse mark · dark (breathe) logo/mark-pulse-dark">
+      <div class="tile"><img loading="lazy" src="logo/mark-pulse-dark.svg" alt="Pulse mark · dark (breathe)"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Pulse mark · dark (breathe)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-pulse-dark.svg" download title="logo/mark-pulse-dark.svg">SVG</a><a class="dl" href="logo/mark-pulse-dark.webp" download title="logo/mark-pulse-dark.webp">WebP</a><a class="dl" href="logo/mark-pulse-dark.json" download title="logo/mark-pulse-dark.json">Lottie</a><a class="dl" href="logo/mark-pulse-dark.gif" download title="logo/mark-pulse-dark.gif">GIF</a><a class="dl" href="logo/mark-pulse-dark.apng" download title="logo/mark-pulse-dark.apng">APNG</a></div>
+    </figure><figure class="card" data-name="assemble mark · light (pop-in) logo/mark-assemble-light">
+      <div class="tile"><img loading="lazy" src="logo/mark-assemble-light.svg" alt="Assemble mark · light (pop-in)"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Assemble mark · light (pop-in)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-assemble-light.svg" download title="logo/mark-assemble-light.svg">SVG</a><a class="dl" href="logo/mark-assemble-light.webp" download title="logo/mark-assemble-light.webp">WebP</a><a class="dl" href="logo/mark-assemble-light.json" download title="logo/mark-assemble-light.json">Lottie</a><a class="dl" href="logo/mark-assemble-light.gif" download title="logo/mark-assemble-light.gif">GIF</a><a class="dl" href="logo/mark-assemble-light.apng" download title="logo/mark-assemble-light.apng">APNG</a></div>
+    </figure><figure class="card" data-name="assemble mark · dark (pop-in) logo/mark-assemble-dark">
+      <div class="tile"><img loading="lazy" src="logo/mark-assemble-dark.svg" alt="Assemble mark · dark (pop-in)"><span class="anim" title="Animated">▶ live</span></div>
+      <figcaption>Assemble mark · dark (pop-in)</figcaption>
+      <div class="dls"><a class="dl" href="logo/mark-assemble-dark.svg" download title="logo/mark-assemble-dark.svg">SVG</a><a class="dl" href="logo/mark-assemble-dark.webp" download title="logo/mark-assemble-dark.webp">WebP</a><a class="dl" href="logo/mark-assemble-dark.json" download title="logo/mark-assemble-dark.json">Lottie</a><a class="dl" href="logo/mark-assemble-dark.gif" download title="logo/mark-assemble-dark.gif">GIF</a><a class="dl" href="logo/mark-assemble-dark.apng" download title="logo/mark-assemble-dark.apng">APNG</a></div>
+    </figure></div>
+  </section>
+<section class="sec" id="sec-apps">
+    <div class="sec-head">
+      <div>
+        <h2>Applications <span class="count">13</span></h2>
+        <p class="blurb">Drop-in surfaces: favicons, avatar, OG card, headers, banners, social.</p>
+      </div>
+      <a class="zip" href="apps.zip" download>Download apps.zip</a>
+    </div>
+    <div class="grid"><figure class="card" data-name="multi-size favicon (16/32/48) apps/favicon">
+      <div class="tile"><img loading="lazy" src="apps/favicon.svg" alt="Multi-size favicon (16/32/48)"></div>
+      <figcaption>Multi-size favicon (16/32/48)</figcaption>
+      <div class="dls"><a class="dl" href="apps/favicon.svg" download title="apps/favicon.svg">SVG</a><a class="dl" href="apps/favicon-16.png" download title="apps/favicon-16.png">PNG 16px</a><a class="dl" href="apps/favicon-32.png" download title="apps/favicon-32.png">PNG 32px</a><a class="dl" href="apps/favicon-48.png" download title="apps/favicon-48.png">PNG 48px</a><a class="dl" href="apps/favicon-64.png" download title="apps/favicon-64.png">PNG 64px</a><a class="dl" href="apps/favicon-512.png" download title="apps/favicon-512.png">PNG 512px</a><a class="dl" href="apps/favicon.ico" download title="apps/favicon.ico">ICO</a></div>
+    </figure><figure class="card" data-name="ios home-screen icon (rounded, on white) apps/apple-touch-icon">
+      <div class="tile"><img loading="lazy" src="apps/apple-touch-icon.svg" alt="iOS home-screen icon (rounded, on white)"></div>
+      <figcaption>iOS home-screen icon (rounded, on white)</figcaption>
+      <div class="dls"><a class="dl" href="apps/apple-touch-icon.svg" download title="apps/apple-touch-icon.svg">SVG</a><a class="dl" href="apps/apple-touch-icon.png" download title="apps/apple-touch-icon.png">PNG</a></div>
+    </figure><figure class="card" data-name="pwa maskable icon (80% safe zone, on accent) apps/maskable">
+      <div class="tile"><img loading="lazy" src="apps/maskable.svg" alt="PWA maskable icon (80% safe zone, on accent)"></div>
+      <figcaption>PWA maskable icon (80% safe zone, on accent)</figcaption>
+      <div class="dls"><a class="dl" href="apps/maskable.svg" download title="apps/maskable.svg">SVG</a><a class="dl" href="apps/maskable-192.png" download title="apps/maskable-192.png">PNG 192px</a><a class="dl" href="apps/maskable-512.png" download title="apps/maskable-512.png">PNG 512px</a></div>
+    </figure><figure class="card" data-name="social avatar (circle-safe, white mark on accent) apps/avatar">
+      <div class="tile"><img loading="lazy" src="apps/avatar.svg" alt="Social avatar (circle-safe, white mark on accent)"></div>
+      <figcaption>Social avatar (circle-safe, white mark on accent)</figcaption>
+      <div class="dls"><a class="dl" href="apps/avatar.svg" download title="apps/avatar.svg">SVG</a><a class="dl" href="apps/avatar.png" download title="apps/avatar.png">PNG</a><a class="dl" href="apps/avatar.webp" download title="apps/avatar.webp">WebP</a></div>
+    </figure><figure class="card" data-name="open graph / social card (1200×630) apps/og-card">
+      <div class="tile"><img loading="lazy" src="apps/og-card.svg" alt="Open Graph / social card (1200×630)"></div>
+      <figcaption>Open Graph / social card (1200×630)</figcaption>
+      <div class="dls"><a class="dl" href="apps/og-card.svg" download title="apps/og-card.svg">SVG</a><a class="dl" href="apps/og-card.png" download title="apps/og-card.png">PNG</a><a class="dl" href="apps/og-card@2x.png" download title="apps/og-card@2x.png">PNG @2x</a><a class="dl" href="apps/og-card@3x.png" download title="apps/og-card@3x.png">PNG @3x</a><a class="dl" href="apps/og-card.webp" download title="apps/og-card.webp">WebP</a></div>
+    </figure><figure class="card" data-name="site / docs header (@3x) apps/header">
+      <div class="tile"><img loading="lazy" src="apps/header.svg" alt="Site / docs header (@3x)"></div>
+      <figcaption>Site / docs header (@3x)</figcaption>
+      <div class="dls"><a class="dl" href="apps/header.svg" download title="apps/header.svg">SVG</a><a class="dl" href="apps/header.png" download title="apps/header.png">PNG</a><a class="dl" href="apps/header@2x.png" download title="apps/header@2x.png">PNG @2x</a><a class="dl" href="apps/header@3x.png" download title="apps/header@3x.png">PNG @3x</a></div>
+    </figure><figure class="card" data-name="site / docs footer (on surface) (@3x) apps/footer">
+      <div class="tile"><img loading="lazy" src="apps/footer.svg" alt="Site / docs footer (on surface) (@3x)"></div>
+      <figcaption>Site / docs footer (on surface) (@3x)</figcaption>
+      <div class="dls"><a class="dl" href="apps/footer.svg" download title="apps/footer.svg">SVG</a><a class="dl" href="apps/footer.png" download title="apps/footer.png">PNG</a><a class="dl" href="apps/footer@2x.png" download title="apps/footer@2x.png">PNG @2x</a><a class="dl" href="apps/footer@3x.png" download title="apps/footer@3x.png">PNG @3x</a></div>
+    </figure><figure class="card" data-name="wide banner (dark theme) (@3x) apps/banner">
+      <div class="tile"><img loading="lazy" src="apps/banner.svg" alt="Wide banner (dark theme) (@3x)"></div>
+      <figcaption>Wide banner (dark theme) (@3x)</figcaption>
+      <div class="dls"><a class="dl" href="apps/banner.svg" download title="apps/banner.svg">SVG</a><a class="dl" href="apps/banner.png" download title="apps/banner.png">PNG</a><a class="dl" href="apps/banner@2x.png" download title="apps/banner@2x.png">PNG @2x</a><a class="dl" href="apps/banner@3x.png" download title="apps/banner@3x.png">PNG @3x</a></div>
+    </figure><figure class="card" data-name="x/twitter profile header (1500×500) (@3x) apps/x-banner">
+      <div class="tile"><img loading="lazy" src="apps/x-banner.svg" alt="X/Twitter profile header (1500×500) (@3x)"></div>
+      <figcaption>X/Twitter profile header (1500×500) (@3x)</figcaption>
+      <div class="dls"><a class="dl" href="apps/x-banner.svg" download title="apps/x-banner.svg">SVG</a><a class="dl" href="apps/x-banner.png" download title="apps/x-banner.png">PNG</a><a class="dl" href="apps/x-banner@2x.png" download title="apps/x-banner@2x.png">PNG @2x</a><a class="dl" href="apps/x-banner@3x.png" download title="apps/x-banner@3x.png">PNG @3x</a></div>
+    </figure><figure class="card" data-name="linkedin company page banner (1128×191) (@3x) apps/linkedin-company">
+      <div class="tile"><img loading="lazy" src="apps/linkedin-company.svg" alt="LinkedIn company page banner (1128×191) (@3x)"></div>
+      <figcaption>LinkedIn company page banner (1128×191) (@3x)</figcaption>
+      <div class="dls"><a class="dl" href="apps/linkedin-company.svg" download title="apps/linkedin-company.svg">SVG</a><a class="dl" href="apps/linkedin-company.png" download title="apps/linkedin-company.png">PNG</a><a class="dl" href="apps/linkedin-company@2x.png" download title="apps/linkedin-company@2x.png">PNG @2x</a><a class="dl" href="apps/linkedin-company@3x.png" download title="apps/linkedin-company@3x.png">PNG @3x</a></div>
+    </figure><figure class="card" data-name="linkedin personal background (1584×396) (@3x) apps/linkedin-personal">
+      <div class="tile"><img loading="lazy" src="apps/linkedin-personal.svg" alt="LinkedIn personal background (1584×396) (@3x)"></div>
+      <figcaption>LinkedIn personal background (1584×396) (@3x)</figcaption>
+      <div class="dls"><a class="dl" href="apps/linkedin-personal.svg" download title="apps/linkedin-personal.svg">SVG</a><a class="dl" href="apps/linkedin-personal.png" download title="apps/linkedin-personal.png">PNG</a><a class="dl" href="apps/linkedin-personal@2x.png" download title="apps/linkedin-personal@2x.png">PNG @2x</a><a class="dl" href="apps/linkedin-personal@3x.png" download title="apps/linkedin-personal@3x.png">PNG @3x</a></div>
+    </figure><figure class="card" data-name="pwa web-app manifest apps/site">
+      <div class="tile"><span class="glyph">{ }</span></div>
+      <figcaption>PWA web-app manifest</figcaption>
+      <div class="dls"><a class="dl" href="apps/site.webmanifest" download title="apps/site.webmanifest">Manifest</a></div>
+    </figure><figure class="card" data-name="favicon &lt;head&gt; snippet apps/favicon-tags">
+      <div class="tile"><span class="glyph">&lt;/&gt;</span></div>
+      <figcaption>Favicon &lt;head&gt; snippet</figcaption>
+      <div class="dls"><a class="dl open" href="apps/favicon-tags.html" target="_blank" rel="noopener">View ↗</a></div>
+    </figure></div>
+  </section>
+<section class="sec" id="sec-stickers">
+    <div class="sec-head">
+      <div>
+        <h2>Stickers <span class="count">3</span></h2>
+        <p class="blurb">Print-ready die-cut assets — vector PDF + transparent 300 dpi PNG.</p>
+      </div>
+      <a class="zip" href="stickers.zip" download>Download stickers.zip</a>
+    </div>
+    <div class="grid"><figure class="card" data-name="die-cut mark · white contour · ~45mm stickers/sticker-mark">
+      <div class="tile"><img loading="lazy" src="stickers/sticker-mark@300dpi.png" alt="Die-cut mark · white contour · ~45mm"></div>
+      <figcaption>Die-cut mark · white contour · ~45mm</figcaption>
+      <div class="dls"><a class="dl" href="stickers/sticker-mark@300dpi.png" download title="stickers/sticker-mark@300dpi.png">PNG</a><a class="dl" href="stickers/sticker-mark.pdf" download title="stickers/sticker-mark.pdf">PDF</a></div>
+    </figure><figure class="card" data-name="die-cut horizontal lockup · white contour · ~90mm stickers/sticker-lockup">
+      <div class="tile"><img loading="lazy" src="stickers/sticker-lockup@300dpi.png" alt="Die-cut horizontal lockup · white contour · ~90mm"></div>
+      <figcaption>Die-cut horizontal lockup · white contour · ~90mm</figcaption>
+      <div class="dls"><a class="dl" href="stickers/sticker-lockup@300dpi.png" download title="stickers/sticker-lockup@300dpi.png">PNG</a><a class="dl" href="stickers/sticker-lockup.pdf" download title="stickers/sticker-lockup.pdf">PDF</a></div>
+    </figure><figure class="card" data-name="die-cut vertical lockup · white contour · ~55mm stickers/sticker-lockup-vertical">
+      <div class="tile"><img loading="lazy" src="stickers/sticker-lockup-vertical@300dpi.png" alt="Die-cut vertical lockup · white contour · ~55mm"></div>
+      <figcaption>Die-cut vertical lockup · white contour · ~55mm</figcaption>
+      <div class="dls"><a class="dl" href="stickers/sticker-lockup-vertical@300dpi.png" download title="stickers/sticker-lockup-vertical@300dpi.png">PNG</a><a class="dl" href="stickers/sticker-lockup-vertical.pdf" download title="stickers/sticker-lockup-vertical.pdf">PDF</a></div>
+    </figure></div>
+  </section>
+<section class="sec" id="sec-tokens">
+    <div class="sec-head">
+      <div>
+        <h2>Tokens <span class="count">2</span></h2>
+        <p class="blurb">Design tokens for code: DTCG JSON and a Tailwind theme.</p>
+      </div>
+      <a class="zip" href="tokens.zip" download>Download tokens.zip</a>
+    </div>
+    <div class="grid"><figure class="card" data-name="design tokens · dtcg json tokens/tokens">
+      <div class="tile"><span class="glyph">{ }</span></div>
+      <figcaption>Design tokens · DTCG JSON</figcaption>
+      <div class="dls"><a class="dl" href="tokens/tokens.json" download title="tokens/tokens.json">Lottie</a></div>
+    </figure><figure class="card" data-name="tailwind theme · css tokens/tailwind.theme">
+      <div class="tile"><span class="glyph">{ }</span></div>
+      <figcaption>Tailwind theme · CSS</figcaption>
+      <div class="dls"><a class="dl" href="tokens/tailwind.theme.css" download title="tokens/tailwind.theme.css">CSS</a></div>
+    </figure></div>
+  </section>
+<section class="sec" id="sec-docs">
+    <div class="sec-head">
+      <div>
+        <h2>Docs &amp; guidelines <span class="count">3</span></h2>
+        <p class="blurb">Generated brand guidelines, colour spec, and the colour-QA preview.</p>
+      </div>
+      
+    </div>
+    <div class="grid"><figure class="card" data-name="brand guidelines guidelines">
+      <div class="tile"><span class="glyph">&lt;/&gt;</span></div>
+      <figcaption>Brand guidelines</figcaption>
+      <div class="dls"><a class="dl open" href="guidelines.html" target="_blank" rel="noopener">View ↗</a><a class="dl" href="guidelines.md" download title="guidelines.md">Markdown</a></div>
+    </figure><figure class="card" data-name="brand spec · colours brand-spec">
+      <div class="tile"><span class="glyph">&lt;/&gt;</span></div>
+      <figcaption>Brand spec · colours</figcaption>
+      <div class="dls"><a class="dl open" href="brand-spec.html" target="_blank" rel="noopener">View ↗</a><a class="dl" href="brand-spec.md" download title="brand-spec.md">Markdown</a></div>
+    </figure><figure class="card" data-name="colour-system preview (qa) preview">
+      <div class="tile"><span class="glyph">&lt;/&gt;</span></div>
+      <figcaption>Colour-system preview (QA)</figcaption>
+      <div class="dls"><a class="dl open" href="preview.html" target="_blank" rel="noopener">View ↗</a></div>
+    </figure></div>
+  </section>
+    <p class="empty" id="empty">No assets match your filter.</p>
+    <footer>
+      Generated by <code>brandkit-generator</code> from one config — assets and this page never drift.
+      Read the <a href="guidelines.html">brand guidelines</a> · <a href="preview.html">colour preview</a>.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var q = document.getElementById('q');
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+      var secs = Array.prototype.slice.call(document.querySelectorAll('.sec'));
+      var empty = document.getElementById('empty');
+      function apply() {
+        var term = q.value.trim().toLowerCase();
+        cards.forEach(function (c) {
+          c.style.display = !term || c.getAttribute('data-name').indexOf(term) !== -1 ? '' : 'none';
+        });
+        var anyVisible = false;
+        secs.forEach(function (s) {
+          var vis = s.querySelectorAll('.card:not([style*="display: none"])').length;
+          s.style.display = vis ? '' : 'none';
+          if (vis) anyVisible = true;
+        });
+        empty.style.display = anyVisible ? 'none' : 'block';
+      }
+      q.addEventListener('input', apply);
+    })();
+  </script>
+</body></html>
